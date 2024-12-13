@@ -12,6 +12,8 @@ Even though it's interpreted, the code uses optimal data structures and is multi
 
 Feel free to use in your projects (distributed under MIT), but if you do, please consider pinging me and telling me about your use case.
 
+![screenshot](screenshot.png)
+
 ## Usage
 
 ### Adding to the project

@@ -6,6 +6,16 @@ size = Vector3(2, 2, 2)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_62s72"]
 albedo_color = Color(1, 0, 1, 1)
 
+[sub_resource type="Animation" id="Animation_tlxbl"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0)
+
 [sub_resource type="Animation" id="Animation_bwp5l"]
 resource_name = "jump"
 loop_mode = 1
@@ -16,16 +26,6 @@ tracks/0/path = NodePath("MeshInstance3D")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.5, 1, 0, 3.7442, 0)
-
-[sub_resource type="Animation" id="Animation_tlxbl"]
-length = 0.001
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("MeshInstance3D")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0)
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_dl28f"]
 _data = {
