@@ -190,22 +190,25 @@ func push_instance(species: FoliageSpecies, at: Vector2, offset: Vector2, instan
 	var scale: float = lerpf(asset.scale_min, asset.scale_max, prng(at, 3))
 	var pitch: float = asset.pitch_max * prng(at, 4)
 	var yaw: float = TAU * prng(at, 5)
+	var yaw2: float = TAU * prng(at, 6)
+	
+	var tr_local := Transform3D.IDENTITY
+	var normal := terrain.data.get_normal(pos3)
+	var axis := Vector3.UP.cross(normal).normalized()
+	var angle := Vector3.UP.angle_to(normal)
+	tr_local = tr_local.rotated_local(axis, angle * asset.align_to_terrain_normal_lerp_alpha)
+	tr_local = tr_local.rotated_local(Vector3.UP, yaw)
+	tr_local = tr_local.rotated_local(Vector3.RIGHT.rotated(Vector3.UP, yaw2), pitch)
+	tr_local = tr_local.translated_local(asset.offset)
 
 	var item: FoliageQueue.QueueItem = null
 	if asset.scene and asset.scene_qlod_threshold >= qlod:
 		item = FoliageQueue.QueueItem.new()
 		item.scene = asset.scene
-		var tr_local := Transform3D.IDENTITY
-		tr_local = tr_local.translated(asset.offset)
+		var tr_local_scaled := tr_local
 		if not asset.scene_scale_property_name:
-			tr_local = tr_local.scaled(Vector3(scale, scale, scale))
-		tr_local = tr_local.rotated(Vector3.RIGHT, pitch)
-		tr_local = tr_local.rotated(Vector3.UP, yaw)
-		if not asset.scene_scale_property_name:
-			tr_local = tr_local.translated(asset.offset_final * scale)
-		else:
-			tr_local = tr_local.translated(asset.offset_final)
-		item.transform = Transform3D(Basis.IDENTITY, offset3) * tr_local
+			tr_local_scaled = tr_local.scaled_local(Vector3(scale, scale, scale))
+		item.transform = Transform3D(Basis.IDENTITY, offset3) * tr_local_scaled
 		item.scale_prop = asset.scene_scale_property_name
 		item.scale_val = Vector3(scale, scale, scale)
 		item.meshes = []
@@ -217,13 +220,8 @@ func push_instance(species: FoliageSpecies, at: Vector2, offset: Vector2, instan
 		if not instance_dict.has(mesh):
 			instance_dict[mesh] = []
 		var instances: Array = instance_dict[mesh]
-		var tr_local := Transform3D.IDENTITY
-		tr_local = tr_local.translated(asset.offset + flod.offset)
-		tr_local = tr_local.scaled(Vector3(scale, scale, scale))
-		tr_local = tr_local.rotated(Vector3.RIGHT, pitch)
-		tr_local = tr_local.rotated(Vector3.UP, yaw)
-		tr_local = tr_local.translated(asset.offset_final * scale)
-		instances.push_back(Transform3D(Basis.IDENTITY, offset3) * tr_local)
+		var tr_local_scaled := tr_local.scaled_local(Vector3(scale, scale, scale))
+		instances.push_back(Transform3D(Basis.IDENTITY, offset3) * tr_local_scaled)
 
 func build_sync(layer: FoliageLayer) -> Array:
 	if qlod >= layer.nqlod: return []  # Nothing to build.

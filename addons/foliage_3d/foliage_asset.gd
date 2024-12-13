@@ -39,9 +39,6 @@ extends Resource
 ## This offset is applied to the asset before rotating and rescaling.
 @export var offset: Vector3
 
-## This offset is applied to the asset after rotating and rescaling.
-@export var offset_final: Vector3
-
 @export_subgroup("Rotation")
 
 ## When set to 0, the asset will be facing up before applying random pitch.
