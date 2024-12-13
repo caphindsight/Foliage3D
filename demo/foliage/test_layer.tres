@@ -12,6 +12,6 @@ randomness = 0.8
 
 [resource]
 script = ExtResource("1_k2p68")
-species = Array[ExtResource("2_4t70a")]([SubResource("Resource_fffgf")])
 grid_size = 8.0
+species = Array[ExtResource("2_4t70a")]([SubResource("Resource_fffgf")])
 terrain_texture_names = Array[StringName]([&"grass"])
