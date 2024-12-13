@@ -53,8 +53,10 @@ func _ready():
 	if nqlod == 0: return  # No foliage to render.
 	root = FoliageQuad.new()
 	var max_size: float = cell_size * pow(2, qlod_max - 1)
+	root.layers = foliage_layers
 	root.rect = Rect2(-max_size / 2, -max_size / 2, max_size, max_size)
 	root.qlod = qlod_max
+	root.nqlod = nqlod
 	root.build()
 	root.init_children(true, true)
 
@@ -232,7 +234,6 @@ func update() -> void:
 	init_missing_nodes()
 	reactivate()
 	recycle_unused_nodes()
-	dump_tree()
 
 var observer_gpos: Vector3
 var observer_elevation: float
