@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FoliageLayer" load_steps=5 format=3 uid="uid://bb4rr7mbrprse"]
+
+[ext_resource type="Script" path="res://addons/foliage_3d/foliage_layer.gd" id="1_k2p68"]
+[ext_resource type="Script" path="res://addons/foliage_3d/foliage_species.gd" id="2_4t70a"]
+[ext_resource type="Resource" uid="uid://dehypg5rf0vj6" path="res://demo/foliage/cube.tres" id="3_8dyau"]
+
+[sub_resource type="Resource" id="Resource_fffgf"]
+script = ExtResource("2_4t70a")
+asset = ExtResource("3_8dyau")
+abundance = 0.1
+randomness = 0.8
+
+[resource]
+script = ExtResource("1_k2p68")
+species = Array[ExtResource("2_4t70a")]([SubResource("Resource_fffgf")])
+grid_size = 8.0
+terrain_texture_names = Array[StringName]([&"grass"])
