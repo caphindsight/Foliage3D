@@ -1,5 +1,17 @@
 # Foliage3D
 
+Procedural foliage for Godot, quickly, straight into yor project.
+Foliage is fully interactive and supports anything that a normal Godot scene supports, including collisions.
+Multimesh optimization comes out of the box.
+LODs are manual, added by the artist.
+
+This plugin is meant to be used with [Terrain3D](https://github.com/TokisanGames/Terrain3D) and will not work without it.
+
+Written in the beautiful and concise GDScript language.
+Even though it's interpreted, the code uses optimal data structures and is multithreaded out of the box, making it blazing fast in practice.
+
+Feel free to use in your projects (distributed under MIT), but if you do, please consider pinging me and telling me about your use case.
+
 ## Usage
 
 ### Adding to the project
