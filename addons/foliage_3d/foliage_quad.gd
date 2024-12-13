@@ -169,9 +169,13 @@ func push_instance(species: FoliageSpecies, at: Vector2, offset: Vector2, instan
 	var flod := asset.flods[asset.qlod_to_flod[qlod]]
 	assert(flod)
 	
+	var height: float = terrain.data.get_height(Vector3(at.x + offset.x, 0, at.y + offset.y))
+	if is_nan(height):
+		return
+	
 	var offset3 := Vector3(
 		(at.x + offset.x) - rect.get_center().x,
-		terrain.data.get_height(Vector3(at.x + offset.x, 0, at.y + offset.y)),
+		height,
 		(at.y + offset.y) - rect.get_center().y,
 	)
 

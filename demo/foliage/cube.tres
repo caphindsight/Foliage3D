@@ -1,15 +1,17 @@
-[gd_resource type="Resource" script_class="FoliageAsset" load_steps=6 format=3 uid="uid://dehypg5rf0vj6"]
+[gd_resource type="Resource" script_class="FoliageAsset" load_steps=7 format=3 uid="uid://dehypg5rf0vj6"]
 
 [ext_resource type="Script" path="res://addons/foliage_3d/foliage_lod.gd" id="1_nxqrr"]
 [ext_resource type="Script" path="res://addons/foliage_3d/foliage_asset.gd" id="2_eulwd"]
 [ext_resource type="Resource" uid="uid://bwvfjjj4gvd8o" path="res://demo/foliage/cube_lod0.tres" id="2_pij2s"]
 [ext_resource type="Resource" uid="uid://cfrew08vohxu5" path="res://demo/foliage/cube_lod1.tres" id="3_lk6n5"]
 [ext_resource type="Resource" uid="uid://b3ed408hpc7a2" path="res://demo/foliage/cube_lod2.tres" id="4_3u130"]
+[ext_resource type="PackedScene" uid="uid://btnfth467p8pj" path="res://demo/foliage/cube.tscn" id="5_7ex7k"]
 
 [resource]
 script = ExtResource("2_eulwd")
 flods = Array[ExtResource("1_nxqrr")]([ExtResource("2_pij2s"), ExtResource("3_lk6n5"), ExtResource("4_3u130")])
 qlod_to_flod = PackedInt32Array(0, 1, 2)
+scene = ExtResource("5_7ex7k")
 scene_qlod_threshold = 0
 scene_scale_property_name = &""
 offset = Vector3(0, 0, 0)

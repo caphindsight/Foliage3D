@@ -82,7 +82,7 @@ collision_mask = 3
 [node name="Tunnel" parent="." instance=ExtResource("3_kdh0b")]
 
 [node name="Player" parent="." instance=ExtResource("3_ht63y")]
-transform = Transform3D(0.176947, 0, -0.98422, 0, 1, 0, 0.98422, 0, 0.176947, 0, 0, 0)
+transform = Transform3D(0.176947, 0, -0.98422, 0, 1, 0, 0.98422, 0, 0.176947, 213.707, 105.167, -1831.06)
 
 [node name="Terrain3D" type="Terrain3D" parent="."]
 data_directory = "res://demo/data"
@@ -98,5 +98,6 @@ script = ExtResource("8_tyh8k")
 terrain = NodePath("../Terrain3D")
 observer = NodePath("../Player")
 foliage_layers = Array[ExtResource("9_nxyos")]([ExtResource("10_e3jue")])
+subdivide_threshold_angle = 1.0
 observer_height_sensitivity = 1.45519e-11
 metadata/_edit_lock_ = true
