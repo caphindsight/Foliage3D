@@ -162,22 +162,30 @@ static func prng(at: Vector2, seed_id: int) -> float:
 		1.0
 	)
 
-func push_instance(species: FoliageSpecies, at: Vector2, offset: Vector2, instance_dict: Dictionary, queue: FoliageQueue) -> void:
+func push_instance(species: FoliageSpecies, at: Vector2, offset: Vector2, instance_dict: Dictionary, queue: FoliageQueue, texture_mask: int) -> void:
 	var asset := species.asset
 	assert(asset)
 	if qlod >= len(asset.qlod_to_flod): return  # Nothing to push.
 	var flod := asset.flods[asset.qlod_to_flod[qlod]]
 	assert(flod)
-	
-	var height: float = terrain.data.get_height(Vector3(at.x + offset.x, 0, at.y + offset.y))
+
+	var pos3 := Vector3(at.x + offset.x, 0, at.y + offset.y)
+	var height: float = terrain.data.get_height(pos3)
 	if is_nan(height):
 		return
-	
+
 	var offset3 := Vector3(
 		(at.x + offset.x) - rect.get_center().x,
 		height,
 		(at.y + offset.y) - rect.get_center().y,
 	)
+
+	var texture_base: int = terrain.data.get_control_base_id(pos3)
+	var texture_overlay: int = terrain.data.get_control_overlay_id(pos3)
+	var texture_blend: float = terrain.data.get_control_blend(pos3)
+	assert(not is_nan(texture_blend))
+	var texture_id = texture_base if texture_blend < 0.5 else texture_overlay
+	if not texture_mask & (1 << texture_id): return  # Rejected by texture.
 
 	var scale: float = lerpf(asset.scale_min, asset.scale_max, prng(at, 3))
 	var pitch: float = asset.pitch_max * prng(at, 4)
@@ -221,6 +229,11 @@ func build_sync(layer: FoliageLayer) -> Array:
 	if qlod >= layer.nqlod: return []  # Nothing to build.
 	var instance_dict := {}
 	var queue := FoliageQueue.new()
+	var texture_mask: int = 0
+	for t in terrain.assets.get_texture_count():
+		var texture := terrain.assets.get_texture(t)
+		if texture.name in layer.terrain_texture_names:
+			texture_mask |= (1 << texture.id)
 	var grid_subdivisions: int = layer.grid_subdivisions << qlod
 	var dx: float = rect.size.x / grid_subdivisions
 	var dy: float = rect.size.y / grid_subdivisions
@@ -233,7 +246,7 @@ func build_sync(layer: FoliageLayer) -> Array:
 				lerpf(-dx / 2, dx / 2, prng(at, 1) * species.randomness),
 				lerpf(-dy / 2, dy / 2, prng(at, 2) * species.randomness),
 			)
-			push_instance(species, at, offset, instance_dict, queue)
+			push_instance(species, at, offset, instance_dict, queue, texture_mask)
 	var res: Array = []
 	var mesh_to_mm: Dictionary
 	for mesh in instance_dict.keys():
