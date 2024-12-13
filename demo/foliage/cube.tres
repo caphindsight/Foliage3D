@@ -7,7 +7,7 @@
 [resource]
 script = ExtResource("2_eulwd")
 flods = Array[ExtResource("1_nxqrr")]([ExtResource("2_pij2s")])
-qlod_to_flod = PackedInt32Array()
+qlod_to_flod = PackedInt32Array(0)
 scene_qlod_threshold = 0
 offset = Vector3(0, 0, 0)
 offset_final = Vector3(0, 0, 0)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://chol2xlfbq7cu"]
+[gd_scene load_steps=15 format=3 uid="uid://chol2xlfbq7cu"]
 
 [ext_resource type="Script" path="res://demo/src/DemoScene.gd" id="1_k7qca"]
 [ext_resource type="PackedScene" uid="uid://d2jihfohphuue" path="res://demo/components/UI.tscn" id="2_nqak5"]
@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://djhl3foqkj4e2" path="res://demo/components/Tunnel.tscn" id="3_kdh0b"]
 [ext_resource type="PackedScene" uid="uid://bb2lp50sjndus" path="res://demo/components/Environment.tscn" id="3_yqldq"]
 [ext_resource type="Terrain3DAssets" uid="uid://dal3jhw6241qg" path="res://demo/data/assets.tres" id="8_g2of2"]
+[ext_resource type="Script" path="res://addons/foliage_3d/foliage_3d.gd" id="8_tyh8k"]
+[ext_resource type="Script" path="res://addons/foliage_3d/foliage_layer.gd" id="9_nxyos"]
+[ext_resource type="Resource" uid="uid://bb4rr7mbrprse" path="res://demo/foliage/test_layer.tres" id="10_e3jue"]
 
 [sub_resource type="Gradient" id="Gradient_vr1m7"]
 offsets = PackedFloat32Array(0.2, 1)
@@ -86,4 +89,11 @@ material = SubResource("Terrain3DMaterial_jrc01")
 assets = ExtResource("8_g2of2")
 collision_mask = 3
 top_level = true
+metadata/_edit_lock_ = true
+
+[node name="Foliage3D" type="Node3D" parent="." node_paths=PackedStringArray("terrain", "observer")]
+script = ExtResource("8_tyh8k")
+terrain = NodePath("../Terrain3D")
+observer = NodePath("../Player")
+foliage_layers = Array[ExtResource("9_nxyos")]([ExtResource("10_e3jue")])
 metadata/_edit_lock_ = true
