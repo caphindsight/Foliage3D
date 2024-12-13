@@ -194,9 +194,11 @@ func push_instance(species: FoliageSpecies, at: Vector2, offset: Vector2, instan
 	
 	var tr_local := Transform3D.IDENTITY
 	var normal := terrain.data.get_normal(pos3)
-	var axis := Vector3.UP.cross(normal).normalized()
-	var angle := Vector3.UP.angle_to(normal)
-	tr_local = tr_local.rotated_local(axis, angle * asset.align_to_terrain_normal_lerp_alpha)
+	var axis := Vector3.UP.cross(normal)
+	if not axis.is_zero_approx():
+		axis = axis.normalized()
+		var angle := Vector3.UP.angle_to(normal)
+		tr_local = tr_local.rotated_local(axis, angle * asset.align_to_terrain_normal_lerp_alpha)
 	tr_local = tr_local.rotated_local(Vector3.UP, yaw)
 	tr_local = tr_local.rotated_local(Vector3.RIGHT.rotated(Vector3.UP, yaw2), pitch)
 	tr_local = tr_local.translated_local(asset.offset)
