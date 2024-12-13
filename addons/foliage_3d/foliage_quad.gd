@@ -1,6 +1,9 @@
 class_name FoliageQuad
 extends RefCounted
 
+# The terrain node reference, must outlive the quad.
+var terrain: Terrain3D
+
 # Foliage layers to build.
 var layers: Array[FoliageLayer]
 
@@ -57,6 +60,7 @@ func has_children() -> bool:
 	return n_children > 0
 
 func copy_parent_properties(parent: FoliageQuad) -> void:
+	terrain = parent.terrain
 	layers = parent.layers
 	qlod = parent.qlod - 1
 	nqlod = parent.nqlod
@@ -86,7 +90,7 @@ func init_children(force: bool = true, as_dummy: bool = false) -> void:
 
 	if not child_b_r or force:
 		child_b_r = FoliageQuad.new()
-		child_b_l.rect = Rect2(rect.get_center(), size)
+		child_b_r.rect = Rect2(rect.get_center(), size)
 		child_b_r.copy_parent_properties(self)
 		child_b_r.build()
 
@@ -102,11 +106,15 @@ var build_tasks_pending: int = 0
 # Starts the build.
 func build() -> void:
 	assert(build_tasks.is_empty() and not build_completed, "build() called twice on the same quad")
+	if qlod >= nqlod:
+		resources = []
+		build_completed = true
+		return  # Nothing to build.
 	var n := len(layers)
 	build_tasks.resize(n)
+	build_tasks_pending = n
 	for i in n:
 		build_tasks[i] = WorkerThreadPool.add_task(build_sync_static.bind(self, i, layers[i]))
-	build_tasks_pending = n
 
 
 # IMPORTANT:
@@ -127,9 +135,6 @@ static func on_build_completed(this: FoliageQuad, task_index: int, generated_res
 	if this.build_tasks_pending <= 0:
 		this.build_completed = true
 
-var instance_dict: Dictionary
-var queue: FoliageQueue
-
 const SEEDS_N: int = 6
 const SMALL_SEEDS: PackedFloat64Array = [
 	16.009,
@@ -148,14 +153,100 @@ const LARGE_SEEDS: PackedFloat64Array = [
 	54344.3590345,
 ]
 
-static func prng(a: float, b: float, seed_id: int) -> float:
+static func prng(at: Vector2, seed_id: int) -> float:
 	return fposmod(
 		sin(
-			a * SMALL_SEEDS[seed_id % SEEDS_N] +
-			b * SMALL_SEEDS[(seed_id + 1) % SEEDS_N]
+			at.x * SMALL_SEEDS[seed_id % SEEDS_N] +
+			at.y * SMALL_SEEDS[(seed_id + 1) % SEEDS_N]
 		) * LARGE_SEEDS[seed_id % SEEDS_N],
 		1.0
 	)
 
+func push_instance(species: FoliageSpecies, at: Vector2, offset: Vector2, instance_dict: Dictionary, queue: FoliageQueue) -> void:
+	var asset := species.asset
+	assert(asset)
+	if qlod >= len(asset.qlod_to_flod): return  # Nothing to push.
+	var flod := asset.flods[asset.qlod_to_flod[qlod]]
+	assert(flod)
+	
+	var offset3 := Vector3(
+		(at.x + offset.x) - rect.get_center().x,
+		terrain.data.get_height(Vector3(at.x + offset.x, 0, at.y + offset.y)),
+		(at.y + offset.y) - rect.get_center().y,
+	)
+
+	var scale: float = lerpf(asset.scale_min, asset.scale_max, prng(at, 3))
+	var pitch: float = asset.pitch_max * prng(at, 4)
+	var yaw: float = TAU * prng(at, 5)
+
+	var item: FoliageQueue.QueueItem = null
+	if asset.scene and asset.scene_qlod_threshold >= qlod:
+		item = FoliageQueue.QueueItem.new()
+		item.scene = asset.scene
+		var tr_local := Transform3D.IDENTITY
+		tr_local = tr_local.translated(asset.offset)
+		if not asset.scene_scale_property_name:
+			tr_local = tr_local.scaled(Vector3(scale, scale, scale))
+		tr_local = tr_local.rotated(Vector3.RIGHT, pitch)
+		tr_local = tr_local.rotated(Vector3.UP, yaw)
+		if not asset.scene_scale_property_name:
+			tr_local = tr_local.translated(asset.offset_final * scale)
+		else:
+			tr_local = tr_local.translated(asset.offset_final)
+		item.transform = Transform3D(Basis.IDENTITY, offset3) * tr_local
+		item.scale_prop = asset.scene_scale_property_name
+		item.scale_val = Vector3(scale, scale, scale)
+		item.meshes = []
+		queue.queue.push_back(item)
+		
+	for fmesh in flod.meshes:
+		var mesh := fmesh.mesh
+		if item: item.meshes.push_back(mesh)
+		if not instance_dict.has(mesh):
+			instance_dict[mesh] = []
+		var instances: Array = instance_dict[mesh]
+		var tr_local := Transform3D.IDENTITY
+		tr_local = tr_local.translated(asset.offset + flod.offset)
+		tr_local = tr_local.scaled(Vector3(scale, scale, scale))
+		tr_local = tr_local.rotated(Vector3.RIGHT, pitch)
+		tr_local = tr_local.rotated(Vector3.UP, yaw)
+		tr_local = tr_local.translated(asset.offset_final * scale)
+		instances.push_back(Transform3D(Basis.IDENTITY, offset3) * tr_local)
+
 func build_sync(layer: FoliageLayer) -> Array:
-	return []
+	if qlod >= layer.nqlod: return []  # Nothing to build.
+	var instance_dict := {}
+	var queue := FoliageQueue.new()
+	var grid_subdivisions: int = layer.grid_subdivisions << qlod
+	var dx: float = rect.size.x / grid_subdivisions
+	var dy: float = rect.size.y / grid_subdivisions
+	for j in grid_subdivisions:
+		for i in grid_subdivisions:
+			var at := rect.position + Vector2(dx * (i + 0.5), dy * (j + 0.5))
+			var species := layer.pick_species(prng(at, 0))
+			if not species: continue
+			var offset := Vector2(
+				lerpf(-dx / 2, dx / 2, prng(at, 1) * species.randomness),
+				lerpf(-dy / 2, dy / 2, prng(at, 2) * species.randomness),
+			)
+			push_instance(species, at, offset, instance_dict, queue)
+	var res: Array = []
+	var mesh_to_mm: Dictionary
+	for mesh in instance_dict.keys():
+		var mm := MultiMesh.new()
+		mesh_to_mm[mesh] = mm
+		mm.mesh = mesh
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		var transforms = instance_dict[mesh]
+		mm.instance_count = len(transforms)
+		mm.visible_instance_count = mm.instance_count
+		for i in len(transforms):
+			mm.set_instance_transform(i, transforms[i])
+		res.push_back(mm)
+	for item in queue.queue:
+		for m in item.meshes:
+			var mm: MultiMesh = mesh_to_mm.get(m, null)
+			if mm: item.multimeshes.push_back(mm)
+		item.meshes.clear()
+	if not queue.queue.is_empty(): res.push_back(queue)
+	return res

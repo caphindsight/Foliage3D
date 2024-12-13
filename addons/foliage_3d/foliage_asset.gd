@@ -28,6 +28,10 @@ extends Resource
 ## Usually you want to keep this at default (zero).
 @export var scene_qlod_threshold: int = 0
 
+## If set, instead of setting the scale property on the root node of the instantiated scene, will set this property.
+## This is to handle scenes that scale non-trivially.
+@export var scene_scale_property_name: StringName
+
 @export_group("Transform")
 
 @export_subgroup("Position")

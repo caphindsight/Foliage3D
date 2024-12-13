@@ -13,3 +13,13 @@ extends Resource
 ## In practice, set to a value between 0 and 1.
 ## You most probably want to keep the default value.
 @export var randomness: float = 0.8
+
+
+# Implementation.
+
+var initialized := false
+
+func init() -> void:
+	if initialized: return
+	initialized = true
+	asset.init()

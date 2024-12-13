@@ -7,11 +7,11 @@
 [sub_resource type="Resource" id="Resource_fffgf"]
 script = ExtResource("2_4t70a")
 asset = ExtResource("3_8dyau")
-abundance = 0.1
-randomness = 0.8
+abundance = 1.0
+randomness = 1.45519e-11
 
 [resource]
 script = ExtResource("1_k2p68")
-grid_size = 4
+grid_subdivisions = 4
 species = Array[ExtResource("2_4t70a")]([SubResource("Resource_fffgf")])
 terrain_texture_names = Array[StringName]([&"Grass"])

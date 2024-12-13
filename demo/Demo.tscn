@@ -70,7 +70,8 @@ dual_scaling = true
 [node name="Demo" type="Node"]
 script = ExtResource("1_k7qca")
 
-[node name="UI" parent="." instance=ExtResource("2_nqak5")]
+[node name="UI" parent="." node_paths=PackedStringArray("foliage") instance=ExtResource("2_nqak5")]
+foliage = NodePath("../Foliage3D")
 
 [node name="Environment" parent="." instance=ExtResource("3_yqldq")]
 
@@ -81,7 +82,7 @@ collision_mask = 3
 [node name="Tunnel" parent="." instance=ExtResource("3_kdh0b")]
 
 [node name="Player" parent="." instance=ExtResource("3_ht63y")]
-transform = Transform3D(0.176947, 0, -0.98422, 0, 1, 0, 0.98422, 0, 0.176947, 223.143, 105.348, -1833.08)
+transform = Transform3D(0.176947, 0, -0.98422, 0, 1, 0, 0.98422, 0, 0.176947, 0, 0, 0)
 
 [node name="Terrain3D" type="Terrain3D" parent="."]
 data_directory = "res://demo/data"
@@ -89,6 +90,7 @@ material = SubResource("Terrain3DMaterial_jrc01")
 assets = ExtResource("8_g2of2")
 collision_mask = 3
 top_level = true
+visible = false
 metadata/_edit_lock_ = true
 
 [node name="Foliage3D" type="Node3D" parent="." node_paths=PackedStringArray("terrain", "observer")]
@@ -96,10 +98,5 @@ script = ExtResource("8_tyh8k")
 terrain = NodePath("../Terrain3D")
 observer = NodePath("../Player")
 foliage_layers = Array[ExtResource("9_nxyos")]([ExtResource("10_e3jue")])
-cell_size = null
-qlod_max = null
-subdivide_threshold_angle = null
-observer_height_sensitivity = null
-observer_snapping_step = null
-update_interval = null
+observer_height_sensitivity = 1.45519e-11
 metadata/_edit_lock_ = true

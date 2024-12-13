@@ -48,11 +48,12 @@ func _ready():
 	# Compute the number of required quad LODs.
 	nqlod = 0
 	for layer in foliage_layers:
-		for species in layer.species:
-			nqlod = maxi(nqlod, len(species.asset.qlod_to_flod))
+		layer.init()
+		nqlod = maxi(nqlod, layer.nqlod)
 	if nqlod == 0: return  # No foliage to render.
 	root = FoliageQuad.new()
 	var max_size: float = cell_size * pow(2, qlod_max - 1)
+	root.terrain = terrain
 	root.layers = foliage_layers
 	root.rect = Rect2(-max_size / 2, -max_size / 2, max_size, max_size)
 	root.qlod = qlod_max
@@ -88,7 +89,6 @@ class QuadNodes:
 			elif res is MultiMesh:
 				instances[res] = MultiMeshInstance3D.new()
 				instances[res].multimesh = res
-				instances[res].cast_shadow = res.get_meta(&"cast_shadow")
 				instances[res].hide()
 			elif res is FoliageQueue:
 				if res.queue.is_empty(): continue
@@ -100,9 +100,9 @@ class QuadNodes:
 			else:
 				assert(false, "Unsupported resource type")
 			instances[res].position = Vector3(
-				(quad.x1 + quad.x2) / 2,
+				quad.rect.get_center().x,
 				0,
-				(quad.y1 + quad.y2) / 2,
+				quad.rect.get_center().y,
 			)
 			foliage.add_child(instances[res], false, Node.INTERNAL_MODE_BACK)
 		for res in instances.keys():
@@ -188,9 +188,12 @@ func restructure_rec(quad: FoliageQuad) -> void:
 
 func dump_tree(quad: FoliageQuad = null, indent: int = 0) -> void:
 	if not quad: quad = root
+	var observer_gpos2 := Vector2(observer_gpos.x, observer_gpos.z)
+	var d: float = sqrt(quad.get_distance2_to_observer(observer_gpos2) + pow(maxf(0, observer_gpos.y - observer_elevation) * observer_height_sensitivity, 2))
+	var a: float = atan2(cell_size * pow(2, quad.qlod), d)
 	var line = ""
 	for i in indent: line += "  "
-	line += "[LOD" + str(quad.qlod) + "] at " + str(quad.rect)
+	line += "[LOD" + str(quad.qlod) + "] at " + str(quad.rect) + " with d=" + str(d) + " and a=" + str(a) + " vs threshold=" + str(subdivide_threshold_angle)
 	if quad.build_completed:
 		line += " - ready"
 	print(line)
@@ -224,7 +227,7 @@ func reactivate(quad: FoliageQuad = null) -> bool:
 func deactivate(quad: FoliageQuad, deactivate_self: bool = true) -> void:
 	if deactivate_self:
 		if quad_nodes.has(quad):
-			quad_nodes[quad].deactivate()
+			quad_nodes[quad].hide()
 	for child in quad.get_children():
 		deactivate(child, true)
 

@@ -1,14 +1,18 @@
-[gd_resource type="Resource" script_class="FoliageLOD" load_steps=5 format=3 uid="uid://bwvfjjj4gvd8o"]
+[gd_resource type="Resource" script_class="FoliageLOD" load_steps=6 format=3 uid="uid://bwvfjjj4gvd8o"]
 
 [ext_resource type="Script" path="res://addons/foliage_3d/foliage_mesh.gd" id="1_3q0bt"]
 [ext_resource type="Script" path="res://addons/foliage_3d/foliage_lod.gd" id="2_6888g"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8gvvq"]
+albedo_color = Color(1, 0, 0, 1)
+
 [sub_resource type="BoxMesh" id="BoxMesh_4ysif"]
+size = Vector3(2, 2, 2)
 
 [sub_resource type="Resource" id="Resource_i5euw"]
 script = ExtResource("1_3q0bt")
 mesh = SubResource("BoxMesh_4ysif")
-material_overrides = Array[Material]([])
+material_overrides = Array[Material]([SubResource("StandardMaterial3D_8gvvq")])
 
 [resource]
 script = ExtResource("2_6888g")

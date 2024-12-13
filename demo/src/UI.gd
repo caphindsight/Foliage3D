@@ -2,6 +2,7 @@ extends Control
 
 
 var player: Node
+@export var foliage: Foliage3D
 var visible_mode: int = 1
 
 
@@ -23,6 +24,7 @@ func _process(_delta) -> void:
 			Collision toggle: C
 
 			Window
+			Dump quad tree: F7
 			Quit: F8
 			UI toggle: F9
 			Render mode: F10
@@ -34,6 +36,8 @@ func _process(_delta) -> void:
 func _unhandled_key_input(p_event: InputEvent) -> void:
 	if p_event is InputEventKey and p_event.pressed:
 		match p_event.keycode:
+			KEY_F7:
+				foliage.dump_tree()
 			KEY_F8:
 				get_tree().quit()
 			KEY_F9:
