@@ -107,9 +107,6 @@ metadata/_custom_type_script = "uid://wwjjx2yy85x4"
 
 [node name="Cubes" type="Node" parent="Foliage" unique_id=556071344]
 script = ExtResource("3_uq58q")
-randomness = 0.3
-keep = 1.0
-hide_lod = 7
 metadata/_custom_type_script = "uid://f7lnv0837smd"
 
 [node name="Observer" parent="." unique_id=1874162946 instance=ExtResource("4_gty8x")]

@@ -25,7 +25,7 @@ extends Node
 ## will not be instantiated at all. Necessary to avoid generating expensive chunks.
 ## For example, you will want to set this to something like 3 for grass, while keeping it
 ## high (around 7-8) for trees.
-@export var hide_lod: int = -1
+@export var hide_lod: int = 7
 
 var chunks: Dictionary[Rect2, FoliageChunkFuture]
 var terrain_data: Terrain3DData
