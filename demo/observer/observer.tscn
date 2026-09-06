@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://b5u34uql6v2vc"]
+
+[ext_resource type="Script" uid="uid://cs3bob5r2j80a" path="res://demo/observer/observer.gd" id="1_swvi0"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_nnl0l"]
+
+[node name="Observer" type="CharacterBody3D" unique_id=1874162946]
+script = ExtResource("1_swvi0")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1057674020]
+shape = SubResource("SphereShape3D_nnl0l")
+
+[node name="Camera" type="Camera3D" parent="." unique_id=135869478]

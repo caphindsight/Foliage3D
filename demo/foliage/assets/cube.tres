@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="FoliageAsset" format=3 uid="uid://dgussbpgjyan5"]
+
+[ext_resource type="PackedScene" uid="uid://cmpfiybs75krb" path="res://demo/foliage/assets/cube.tscn" id="1_42dvn"]
+[ext_resource type="Script" uid="uid://clt7tqfr5xm4c" path="res://addons/foliage_3d/scripts/foliage_asset.gd" id="1_ry6gx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uq58q"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_42dvn"]
+material = SubResource("StandardMaterial3D_uq58q")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lwnn1"]
+albedo_color = Color(1, 0.49411765, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gty8x"]
+material = SubResource("StandardMaterial3D_lwnn1")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p5w0o"]
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rfrqy"]
+material = SubResource("StandardMaterial3D_p5w0o")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1yyri"]
+albedo_color = Color(0, 0.6784314, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ch3wn"]
+material = SubResource("StandardMaterial3D_1yyri")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ovs54"]
+albedo_color = Color(0, 0.8862745, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_e76oj"]
+material = SubResource("StandardMaterial3D_ovs54")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j1no7"]
+albedo_color = Color(0, 0.16078432, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_k6pdp"]
+material = SubResource("StandardMaterial3D_j1no7")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p5pqs"]
+albedo_color = Color(0.7764706, 0, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7071d"]
+material = SubResource("StandardMaterial3D_p5pqs")
+
+[resource]
+script = ExtResource("1_ry6gx")
+lods = Array[Mesh]([SubResource("BoxMesh_42dvn"), SubResource("BoxMesh_gty8x"), SubResource("BoxMesh_rfrqy"), SubResource("BoxMesh_ch3wn"), SubResource("BoxMesh_e76oj"), SubResource("BoxMesh_k6pdp"), SubResource("BoxMesh_7071d")])
+lod_map = PackedInt32Array(-1, 0, 1, 2, 3, 4, 5, 6)
+scene = ExtResource("1_42dvn")
+scale_max = 2.0
+align_to_normal = 1.0
+metadata/_custom_type_script = "uid://clt7tqfr5xm4c"

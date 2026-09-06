@@ -1,0 +1,115 @@
+[gd_scene format=3 uid="uid://cc7u2p2bjth4h"]
+
+[ext_resource type="Script" uid="uid://dumdcbm21324f" path="res://demo/testbed.gd" id="1_73hay"]
+[ext_resource type="Script" uid="uid://wwjjx2yy85x4" path="res://addons/foliage_3d/scripts/foliage_partition.gd" id="2_uq58q"]
+[ext_resource type="Script" uid="uid://cr5b3uoqqcxdi" path="res://demo/foliage/scripts/cubes.gd" id="3_uq58q"]
+[ext_resource type="PackedScene" uid="uid://b5u34uql6v2vc" path="res://demo/observer/observer.tscn" id="4_gty8x"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_uq58q"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_gty8x"]
+sky_material = SubResource("ProceduralSkyMaterial_uq58q")
+
+[sub_resource type="Environment" id="Environment_lwnn1"]
+background_mode = 2
+sky = SubResource("Sky_gty8x")
+glow_enabled = true
+
+[sub_resource type="Gradient" id="Gradient_73hay"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_og7js"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_uq58q"]
+noise = SubResource("FastNoiseLite_og7js")
+color_ramp = SubResource("Gradient_73hay")
+seamless = true
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_gty8x"]
+_shader_parameters = {
+&"bias_distance": null,
+&"blend_sharpness": null,
+&"depth_blur": null,
+&"enable_macro_variation": null,
+&"enable_projection": null,
+&"flat_terrain_normals": null,
+&"macro_variation1": null,
+&"macro_variation2": null,
+&"macro_variation_slope": null,
+&"mipmap_bias": null,
+&"noise1_angle": null,
+&"noise1_offset": null,
+&"noise1_scale": null,
+&"noise2_scale": null,
+&"noise_texture": SubResource("NoiseTexture2D_uq58q"),
+&"projection_threshold": null
+}
+show_checkered = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lwnn1"]
+transparency = 4
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_rfrqy"]
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_lwnn1")
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_p5w0o"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_rfrqy")])
+
+[node name="Testbed" type="Node3D" unique_id=1055728244]
+script = ExtResource("1_73hay")
+
+[node name="Env" type="WorldEnvironment" parent="." unique_id=1362775497]
+environment = SubResource("Environment_lwnn1")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1408708681]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Terrain" type="Terrain3D" parent="." unique_id=856795272]
+data_directory = "res://demo/terrain/data"
+material = SubResource("Terrain3DMaterial_gty8x")
+assets = SubResource("Terrain3DAssets_p5w0o")
+show_checkered = true
+top_level = true
+metadata/_edit_lock_ = true
+
+[node name="Foliage" type="Node" parent="." unique_id=792791859 node_paths=PackedStringArray("terrain")]
+script = ExtResource("2_uq58q")
+terrain = NodePath("../Terrain")
+horizon_size = 16384.0
+metadata/_custom_type_script = "uid://wwjjx2yy85x4"
+
+[node name="Cubes" type="Node" parent="Foliage" unique_id=556071344]
+script = ExtResource("3_uq58q")
+randomness = 0.3
+keep = 1.0
+hide_lod = 7
+metadata/_custom_type_script = "uid://f7lnv0837smd"
+
+[node name="Observer" parent="." unique_id=1874162946 instance=ExtResource("4_gty8x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 43.03631, 0)

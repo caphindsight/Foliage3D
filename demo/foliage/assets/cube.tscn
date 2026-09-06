@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://cmpfiybs75krb"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_nnl0l"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_64wqf"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="Animation" id="Animation_tc7q3"]
+length = 0.001
+tracks/0/type = "scale_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1, 1, 1)
+
+[sub_resource type="Animation" id="Animation_4cbwh"]
+resource_name = "pulse"
+loop_mode = 1
+tracks/0/type = "scale_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1, 1, 1, 0.5, 1, 2, 2, 2)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_tc7q3"]
+_data = {
+&"RESET": SubResource("Animation_tc7q3"),
+&"pulse": SubResource("Animation_4cbwh")
+}
+
+[node name="Cube" type="Node3D" unique_id=1075747786]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=728622066]
+mesh = SubResource("BoxMesh_nnl0l")
+surface_material_override/0 = SubResource("StandardMaterial3D_64wqf")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1957407966]
+libraries/ = SubResource("AnimationLibrary_tc7q3")
+autoplay = &"pulse"
