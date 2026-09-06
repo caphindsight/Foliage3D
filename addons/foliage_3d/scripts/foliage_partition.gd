@@ -42,6 +42,13 @@ extends Node
 ## The [b]lo[/b] threshold should be below the [b]hi[/b] threshold.
 @export_range(0, 180, 0.1, "radians_as_degrees") var chunk_angular_threshold_hi: float = deg_to_rad(70)
 
+## Emitted on every tick if all foliage chunks are ready.
+## Mostly useful for synchronizing the loading screen like so:
+## show_loading_screen()
+## await foliage_placement.foliage_is_ready
+## hide_loading_screen()
+signal foliage_is_ready()
+
 func _ready() -> void:
 	layers.clear()
 	for child in get_children():
@@ -63,7 +70,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	observer_position = find_observer_position()
 	restructure_quad_tree(0)
-	update_visibility(0)
+	if update_visibility(0):
+		foliage_is_ready.emit()
 
 var layers: Array[FoliageLayer]
 var quad_tree: Array[Quad]
@@ -163,11 +171,14 @@ func unsubdivide_quad(quad: int) -> void:
 		pop_subtree(q.children[i])
 	q.children = []
 
-func update_visibility(quad: int) -> void:
+# Returns true if all layers are ready.
+func update_visibility(quad: int) -> bool:
+	var subtree_is_ready: bool = true
 	var q: Quad = quad_tree[quad]
 	if q.has_children:
 		for i in 4:
-			update_visibility(q.children[i])
+			if not update_visibility(q.children[i]):
+				subtree_is_ready = false
 	for i in len(layers):
 		var chunk := layers[i].chunk(q.rect, q.lod)
 		if not chunk:
@@ -193,6 +204,8 @@ func update_visibility(quad: int) -> void:
 				chunk.show_chunk()
 		else:
 			q.chunks_ready &= ~(1 << i)
+			subtree_is_ready = false
+	return subtree_is_ready
 
 class Quad:
 	var rect: Rect2

@@ -26,9 +26,13 @@ func flush_transforms() -> void:
 		multimesh.set_instance_transform(k + i, transforms[i])
 	transforms.clear()
 
+func _ready() -> void:
+	set_process(scene != null)
+
 func _process(_delta: float) -> void:
-	if not scene: return
-	if multimesh.visible_instance_count == 0: return
+	if not scene or multimesh.visible_instance_count == 0:
+		set_process(false)
+		return
 	multimesh.visible_instance_count -= 1
 	var instance_transform = multimesh.get_instance_transform(multimesh.visible_instance_count)
 	var instance = scene.instantiate()

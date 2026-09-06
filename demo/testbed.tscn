@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://wwjjx2yy85x4" path="res://addons/foliage_3d/scripts/foliage_partition.gd" id="2_uq58q"]
 [ext_resource type="Script" uid="uid://cr5b3uoqqcxdi" path="res://demo/foliage/scripts/cubes.gd" id="3_uq58q"]
 [ext_resource type="PackedScene" uid="uid://b5u34uql6v2vc" path="res://demo/observer/observer.tscn" id="4_gty8x"]
+[ext_resource type="Script" uid="uid://dva1yvp2uents" path="res://demo/fps_label.gd" id="5_lwnn1"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_uq58q"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -113,3 +114,8 @@ metadata/_custom_type_script = "uid://f7lnv0837smd"
 
 [node name="Observer" parent="." unique_id=1874162946 instance=ExtResource("4_gty8x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 43.03631, 0)
+
+[node name="FPSLabel" type="Label" parent="." unique_id=1724035248]
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("5_lwnn1")
