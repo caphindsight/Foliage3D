@@ -55,7 +55,7 @@ func unchunk(rect: Rect2) -> void:
 
 # Runs on the worker thread!
 func prepare_placement(rect: Rect2) -> FoliagePlacement:
-	var placement := FoliagePlacement.new()
+	var placement := FoliagePlacement.new(terrain_data)
 	var x1 := rect.position.x - lattice_spacing * 1.5
 	var i1 := floori(x1 / lattice_spacing)
 	var x2 := rect.end.x + lattice_spacing * 1.5

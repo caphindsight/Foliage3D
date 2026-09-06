@@ -3,12 +3,16 @@
 class_name FoliagePlacement
 extends RefCounted
 
+var terrain_data: Terrain3DData
 var assets: Array[FoliageAsset]
 var transforms: Array[Transform3D]
 var normals: PackedVector3Array
 var base_texture_ids: PackedInt32Array
 var overlay_texture_ids: PackedInt32Array
 var texture_blend_amounts: PackedFloat32Array
+
+func _init(p_terrain_data: Terrain3DData) -> void:
+	terrain_data = p_terrain_data
 
 ## Count of the available points on the grid.
 func size() -> int:
