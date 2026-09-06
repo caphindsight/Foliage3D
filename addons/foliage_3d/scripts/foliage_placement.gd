@@ -53,7 +53,7 @@ func get_normal(i: int) -> Vector3:
 
 ### Gets the terrain slope of the i-th availabnle grid point, in radians.
 func get_slope(i: int) -> float:
-	return PI / 2 - acos(absf(normals[i].y))
+	return acos(absf(normals[i].y))
 
 ## Get the asset placed at the i-th available grid point.
 ## If there isn't an asset currently placed, returns [code]null[/code].
