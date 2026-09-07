@@ -6,11 +6,13 @@
 [ext_resource type="ArrayMesh" uid="uid://dfbdgncs7x3i7" path="res://demo/foliage/models/oak_lod2.res" id="3_i1nhf"]
 [ext_resource type="ArrayMesh" uid="uid://bkrfgv5lnqol7" path="res://demo/foliage/models/oak_lod3.res" id="4_nedql"]
 [ext_resource type="QuadMesh" uid="uid://6p1vhuxtjxs4" path="res://demo/foliage/models/oak_lod4.tres" id="5_u6p24"]
+[ext_resource type="PackedScene" uid="uid://dsb5q2oj8xvlp" path="res://demo/foliage/models/oak_interactive.tscn" id="6_cv6fh"]
 
 [resource]
 script = ExtResource("1_48fmy")
 lods = Array[Mesh]([ExtResource("1_6fci4"), ExtResource("2_cv6fh"), ExtResource("3_i1nhf"), ExtResource("4_nedql"), ExtResource("5_u6p24")])
-lod_map = PackedInt32Array(0, 1, 2, 3, 3, 4, 4)
+lod_map = PackedInt32Array(-1, 0, 1, 2, 3, 4, 4)
+scene = ExtResource("6_cv6fh")
 pitch_max = 0.00872664625997164
 scale_min = 0.8
 scale_max = 1.2
