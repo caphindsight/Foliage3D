@@ -1,73 +1,39 @@
-## Basic foliage layer, provides limited controls over placement configuration.
+## This should be enough for most basic use cases, like placing some trees and grass.
+## For more advanced use cases, implement your own subclass of [FoliageLayer].
 class_name FoliageLayerBasic
 extends FoliageLayer
 
-## A list of assets to place.
-@export var assets: Array[FoliageAsset]
-
-## Probabilities of each of the asset from the list above, in the same order.
-## If unspecified, probabilities are assumed to be uniform.
-@export var probabilities: PackedFloat32Array
-
-## Assets will be only placed on the selected terrain texture ids.
-@export_flags_3d_render var textures: PackedInt32Array
-
-## If specified, allows specifying the dependence of the asset density on height.
-@export var height_density_curve: Curve
-
-## If specified, allows specifying the dependence of the asset density on the terrain slope (in degrees).
-@export var slope_density_curve: Curve
-
-## If specified, allows specifying the dependence of the asset density on a 2d noise (in world coordinates).
-@export var density_noise: Noise
-
-var cumulative_probabilities: PackedFloat32Array
-var texture_mask: int
-
-func _ready() -> void:
-	cumulative_probabilities.resize(len(probabilities))
-	for i in len(probabilities):
-		cumulative_probabilities[i] = probabilities[i]
-		if i > 0:
-			cumulative_probabilities[i] += cumulative_probabilities[i - 1]
-	texture_mask = 0
-	for i in textures:
-		texture_mask |= 1 << i
+## Use these collections.
+## [FoliageLayerBasic] will first pick a collection based on individual probability densities for each collection,
+## and then pick a [FoliageAsset] inside that collection based on the probabilities of assets within the collection.
+@export var collections: Array[FoliageCollectionBasic]
 
 func place(placement: FoliagePlacement) -> void:
-	var height_density_curve_thread_local: Curve
-	if height_density_curve:
-		height_density_curve_thread_local = height_density_curve.duplicate(true)
-	var slope_density_curve_thread_local: Curve
-	if slope_density_curve:
-		slope_density_curve_thread_local = slope_density_curve.duplicate(true)
-	var density_noise_thread_local: Noise
-	if density_noise:
-		density_noise_thread_local = density_noise.duplicate(true)
+	var collections_thread_local: Array[FoliageCollectionBasic] = collections.duplicate_deep()
+	for i in len(collections_thread_local):
+		collections_thread_local[i].precompute()
+	var rng := FoliageRandom.new(772364723)
 	for i in placement.size():
-		var probability: float = 1.0
-		if texture_mask != 0:
-			var texture_probability: float = 0.0
-			var base_id: int = placement.base_texture_ids[i]
-			var overlay_id: int = placement.overlay_texture_ids[i]
-			var blend_amount: float = placement.texture_blend_amounts[i]
-			if base_id >= 0 and texture_mask & (1 << base_id) != 0:
-				texture_probability += (1 - blend_amount)
-			if overlay_id >= 0 and texture_mask & (1 << overlay_id) != 0:
-				texture_probability += blend_amount
-			probability *= texture_probability
-		var position: Vector3 = placement.get_transform(i).origin
-		if height_density_curve_thread_local:
-			probability *= height_density_curve_thread_local.sample(position.y)
-		if slope_density_curve_thread_local:
-			probability *= slope_density_curve_thread_local.sample(rad_to_deg(placement.get_slope(i)))
-		if density_noise_thread_local:
-			var noise: float = density_noise_thread_local.get_noise_2d(position.x, position.z)
-			probability *= (noise / 2.0 + 0.5)
-		var rng := FoliageRandom.new(32487673875)
-		var rand: float = rng.prng3(position)
-		if rand >= probability: continue
-		rand /= probability
-		var ind: int = cumulative_probabilities.bsearch(rand)
-		if ind >= len(assets): continue
-		placement.place_asset(i, assets[ind])
+		var probabilities: PackedFloat64Array
+		probabilities.resize(len(collections_thread_local))
+		for j in len(probabilities):
+			probabilities[j] = collections_thread_local[j].get_collection_probability(placement, i)
+		var total_probability: float = 0
+		for j in len(probabilities):
+			total_probability += probabilities[j]
+		# If they sum up to >1, normalize them.
+		if total_probability > 1:
+			for j in len(probabilities):
+				probabilities[j] /= total_probability
+		var picked_collection: int = -1
+		var cumulative_probability: float = 0
+		var pos := placement.get_transform(i).origin
+		var uniform: float = rng.prng2(Vector2(pos.x, pos.z))
+		for j in len(probabilities):
+			cumulative_probability += probabilities[j]
+			if cumulative_probability > uniform:
+				picked_collection = j
+				uniform = lerpf(0, 1, (uniform - cumulative_probability + probabilities[j]) / probabilities[j])
+				break
+		if picked_collection >= 0:
+			placement.place_asset(i, collections_thread_local[picked_collection].get_asset(uniform))

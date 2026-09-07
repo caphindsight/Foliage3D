@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dumdcbm21324f" path="res://demo/testbed.gd" id="1_73hay"]
 [ext_resource type="Script" uid="uid://wwjjx2yy85x4" path="res://addons/foliage_3d/scripts/foliage_partition.gd" id="2_uq58q"]
+[ext_resource type="Script" uid="uid://dfxr8qtg4c8lw" path="res://addons/foliage_3d/scripts/foliage_collection_basic.gd" id="4_ch3wn"]
 [ext_resource type="PackedScene" uid="uid://b5u34uql6v2vc" path="res://demo/observer/observer.tscn" id="4_gty8x"]
 [ext_resource type="Script" uid="uid://clt7tqfr5xm4c" path="res://addons/foliage_3d/scripts/foliage_asset.gd" id="4_p5w0o"]
 [ext_resource type="Script" uid="uid://jwbpqi7rqtj6" path="res://addons/foliage_3d/scripts/foliage_layer_basic.gd" id="4_rfrqy"]
@@ -83,15 +84,11 @@ lod0_range = 128.0
 [sub_resource type="Terrain3DAssets" id="Terrain3DAssets_p5w0o"]
 mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_rfrqy")])
 
-[sub_resource type="Curve" id="Curve_p5w0o"]
-_limits = [0.0, 1.0, 0.0, 10.0]
-_data = [Vector2(0, 0.15502185), 0.0, 0.0, 0, 0, Vector2(10, 1), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_1yyri"]
-_limits = [0.0, 1.0, 0.0, 90.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(14.344262, 0), 0.0, 0.0, 0, 0]
-point_count = 2
+[sub_resource type="Resource" id="Resource_lwnn1"]
+script = ExtResource("4_ch3wn")
+assets = Array[ExtResource("4_p5w0o")]([ExtResource("5_ch3wn")])
+weights = PackedFloat32Array(1)
+metadata/_custom_type_script = "uid://dfxr8qtg4c8lw"
 
 [node name="Testbed" type="Node3D" unique_id=1055728244]
 script = ExtResource("1_73hay")
@@ -119,10 +116,7 @@ metadata/_custom_type_script = "uid://wwjjx2yy85x4"
 
 [node name="Cubes" type="Node" parent="Foliage" unique_id=2059694663]
 script = ExtResource("4_rfrqy")
-assets = Array[ExtResource("4_p5w0o")]([ExtResource("5_ch3wn")])
-probabilities = PackedFloat32Array(1)
-height_density_curve = SubResource("Curve_p5w0o")
-slope_density_curve = SubResource("Curve_1yyri")
+collections = Array[ExtResource("4_ch3wn")]([SubResource("Resource_lwnn1")])
 keep = 1.0
 metadata/_custom_type_script = "uid://jwbpqi7rqtj6"
 
