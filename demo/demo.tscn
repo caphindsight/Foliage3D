@@ -1,0 +1,197 @@
+[gd_scene format=3 uid="uid://ywaui7177d8k"]
+
+[ext_resource type="Texture2D" uid="uid://2kj3t5qrfb2h" path="res://demo/terrain/textures/forest_ah.png" id="1_j5lb4"]
+[ext_resource type="Texture2D" uid="uid://dnvmvs4gjix34" path="res://demo/terrain/textures/forest_nr.png" id="2_u10mr"]
+[ext_resource type="Texture2D" uid="uid://dcr5jmcydhe0k" path="res://demo/terrain/textures/rocks_ah.png" id="3_onu7k"]
+[ext_resource type="Texture2D" uid="uid://pou2l6mmbaq7" path="res://demo/terrain/textures/rocks_nr.png" id="4_s1s6j"]
+[ext_resource type="Script" uid="uid://wwjjx2yy85x4" path="res://addons/foliage_3d/scripts/foliage_partition.gd" id="5_onvmd"]
+[ext_resource type="PackedScene" uid="uid://b5u34uql6v2vc" path="res://demo/observer/observer.tscn" id="5_u10mr"]
+[ext_resource type="Script" uid="uid://jwbpqi7rqtj6" path="res://addons/foliage_3d/scripts/foliage_layer_basic.gd" id="6_oeqrt"]
+[ext_resource type="Script" uid="uid://dva1yvp2uents" path="res://demo/fps_label.gd" id="6_onu7k"]
+[ext_resource type="Script" uid="uid://dfxr8qtg4c8lw" path="res://addons/foliage_3d/scripts/foliage_collection_basic.gd" id="7_1rqa4"]
+[ext_resource type="Script" uid="uid://clt7tqfr5xm4c" path="res://addons/foliage_3d/scripts/foliage_asset.gd" id="8_xm42s"]
+[ext_resource type="Resource" uid="uid://02ukd0ilxmyg" path="res://demo/foliage/assets/grass.tres" id="9_tdg64"]
+[ext_resource type="Resource" uid="uid://baahmr8b34bm8" path="res://demo/foliage/assets/oak.tres" id="10_xm42s"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_5hjng"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_d6po2"]
+sky_material = SubResource("ProceduralSkyMaterial_5hjng")
+
+[sub_resource type="Environment" id="Environment_ytiva"]
+background_mode = 2
+sky = SubResource("Sky_d6po2")
+glow_enabled = true
+
+[sub_resource type="Gradient" id="Gradient_5hjng"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_d6po2"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ytiva"]
+noise = SubResource("FastNoiseLite_d6po2")
+color_ramp = SubResource("Gradient_5hjng")
+seamless = true
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_dar0o"]
+_shader_parameters = {
+&"auto_base_texture": 1,
+&"auto_height_reduction": 0.1070000050825,
+&"auto_overlay_texture": 0,
+&"auto_slope": 3.2850001560375,
+&"bias_distance": null,
+&"blend_sharpness": 0.11200000532,
+&"depth_blur": null,
+&"enable_macro_variation": null,
+&"enable_projection": false,
+&"flat_terrain_normals": null,
+&"macro_variation1": null,
+&"macro_variation2": null,
+&"macro_variation_slope": null,
+&"mipmap_bias": null,
+&"noise1_angle": null,
+&"noise1_offset": null,
+&"noise1_scale": null,
+&"noise2_scale": null,
+&"noise_texture": SubResource("NoiseTexture2D_ytiva"),
+&"projection_threshold": 0.01999999955296,
+&"world_noise_fragment_normals": false,
+&"world_noise_height": 26.80000039935216,
+&"world_noise_lod_distance": 7500.0,
+&"world_noise_max_octaves": null,
+&"world_noise_min_octaves": null,
+&"world_noise_offset": null,
+&"world_noise_region_blend": 0.53999998979258,
+&"world_noise_scale": 5.0
+}
+world_background = 2
+auto_shader = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j5lb4"]
+transparency = 4
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_u10mr"]
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_j5lb4")
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_onvmd"]
+name = "Forest"
+albedo_texture = ExtResource("1_j5lb4")
+normal_texture = ExtResource("2_u10mr")
+uv_scale = 1.0
+detiling_rotation = 0.38581
+detiling_shift = 0.18166
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_oeqrt"]
+name = "Rocks"
+id = 1
+albedo_texture = ExtResource("3_onu7k")
+normal_texture = ExtResource("4_s1s6j")
+uv_scale = 1.0
+detiling_rotation = 0.26817
+detiling_shift = 0.63149
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_onu7k"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_u10mr")])
+texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_onvmd"), SubResource("Terrain3DTextureAsset_oeqrt")])
+
+[sub_resource type="Curve" id="Curve_1rqa4"]
+_limits = [0.0, 1.0, 0.0, 90.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(23.217636, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_onvmd"]
+script = ExtResource("7_1rqa4")
+assets = Array[ExtResource("8_xm42s")]([ExtResource("9_tdg64")])
+weights = PackedFloat32Array(1)
+textures = PackedInt32Array(0)
+slope_density_curve = SubResource("Curve_1rqa4")
+metadata/_custom_type_script = "uid://dfxr8qtg4c8lw"
+
+[sub_resource type="Curve" id="Curve_6fci4"]
+_limits = [0.0, 1.0, 0.0, 200.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(43.785854, 0.025345564), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_xm42s"]
+_limits = [0.0, 1.0, 0.0, 90.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(90, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_1rqa4"]
+script = ExtResource("7_1rqa4")
+assets = Array[ExtResource("8_xm42s")]([ExtResource("10_xm42s")])
+weights = PackedFloat32Array(1)
+textures = PackedInt32Array(0)
+height_density_curve = SubResource("Curve_6fci4")
+slope_density_curve = SubResource("Curve_xm42s")
+metadata/_custom_type_script = "uid://dfxr8qtg4c8lw"
+
+[node name="Demo" type="Node3D" unique_id=873619184]
+
+[node name="Env" type="WorldEnvironment" parent="." unique_id=1336780326]
+environment = SubResource("Environment_ytiva")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1820751547]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Terrain" type="Terrain3D" parent="." unique_id=943124592]
+data_directory = "res://demo/terrain/data"
+material = SubResource("Terrain3DMaterial_dar0o")
+assets = SubResource("Terrain3DAssets_onu7k")
+top_level = true
+metadata/_edit_lock_ = true
+
+[node name="Foliage" type="Node" parent="." unique_id=179098947 node_paths=PackedStringArray("terrain")]
+script = ExtResource("5_onvmd")
+terrain = NodePath("../Terrain")
+metadata/_custom_type_script = "uid://wwjjx2yy85x4"
+
+[node name="Grass" type="Node" parent="Foliage" unique_id=896278801]
+script = ExtResource("6_oeqrt")
+collections = Array[ExtResource("7_1rqa4")]([SubResource("Resource_onvmd")])
+lattice_spacing = 2.0
+randomness = 0.4
+keep = 0.9
+hide_lod = 2
+metadata/_custom_type_script = "uid://jwbpqi7rqtj6"
+
+[node name="Trees" type="Node" parent="Foliage" unique_id=577720804]
+script = ExtResource("6_oeqrt")
+collections = Array[ExtResource("7_1rqa4")]([SubResource("Resource_1rqa4")])
+lattice_spacing = 8.0
+keep = 0.1
+metadata/_custom_type_script = "uid://jwbpqi7rqtj6"
+
+[node name="Observer" parent="." unique_id=1874162946 instance=ExtResource("5_u10mr")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -367.08313, 158.77776, -375.85297)
+
+[node name="FPS_Label" type="Label" parent="." unique_id=474437298]
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("6_onu7k")

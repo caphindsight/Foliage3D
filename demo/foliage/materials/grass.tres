@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dcwam3ik2ill"]
+
+[ext_resource type="Shader" uid="uid://duvlo4lj3l6k8" path="res://demo/foliage/shaders/grass.gdshader" id="1_edk56"]
+[ext_resource type="Texture2D" uid="uid://cc6garhgnoa83" path="res://demo/foliage/textures/grass_albedo.png" id="2_edk56"]
+[ext_resource type="Texture2D" uid="uid://bm7lhevq1yxek" path="res://demo/foliage/textures/grass_normal.png" id="3_tfgmk"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_edk56")
+shader_parameter/albedo_modulate = Color(0.74, 0.6808, 0.3848, 1)
+shader_parameter/albedo_tex = ExtResource("2_edk56")
+shader_parameter/normal_tex = ExtResource("3_tfgmk")
+shader_parameter/normal_scale = 1.0
+shader_parameter/alpha_scissor_threshold = 0.5
+shader_parameter/wind_enabled = true
+shader_parameter/wind_power_scale = 1.0
+shader_parameter/wind_characteristic_height = 1.0
+shader_parameter/toon_normals = true
+shader_parameter/fade_start_distance = 12.0
+shader_parameter/fade_end_distance = 64.0

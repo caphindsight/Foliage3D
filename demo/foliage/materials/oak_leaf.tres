@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dsketnbfp2cqy"]
+
+[ext_resource type="Shader" uid="uid://c8q1kaltc84a7" path="res://demo/foliage/shaders/tree_leaves.gdshader" id="1_faqpy"]
+[ext_resource type="Texture2D" uid="uid://cacr4iedhwhqw" path="res://demo/foliage/textures/oak_leaf_albedo.png" id="2_p2n1r"]
+[ext_resource type="Texture2D" uid="uid://b8xpuxkkdvwjb" path="res://demo/foliage/textures/oak_leaf_nr.png" id="3_mwn0c"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_faqpy")
+shader_parameter/wind_enabled = true
+shader_parameter/wind_power_scale = 0.1
+shader_parameter/toon_normals = false
+shader_parameter/wind_turbulence_scale = 1.0
+shader_parameter/albedo_modulate = Color(1, 1, 1, 1)
+shader_parameter/albedo_tex = ExtResource("2_p2n1r")
+shader_parameter/alpha_scissor_threshold_lo = 0.1
+shader_parameter/alpha_scissor_threshold_hi = 0.5
+shader_parameter/characteristic_distance = 50.0
+shader_parameter/normal_roughness_tex = ExtResource("3_mwn0c")
+shader_parameter/normal_scale = 1.0

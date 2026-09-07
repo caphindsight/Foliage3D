@@ -1,0 +1,84 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://st4yvfmepjs8"
+path="res://.godot/imported/oak.glb-8ab220670e57ea2525b9d1687a71a073.scn"
+
+[deps]
+
+source_file="res://demo/foliage/models/oak.glb"
+dest_files=["res://.godot/imported/oak.glb-8ab220670e57ea2525b9d1687a71a073.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+mesh_library/use_node_names_as_mesh_names=false
+array_mesh/deduplicate_surfaces=true
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"meshes": {
+"oak_oak_lod0": {
+"generate/lightmap_uv": 0,
+"generate/lods": 2,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://demo/foliage/models/oak_lod0.res",
+"save_to_file/path": "uid://bwdrdihdbb5r1"
+},
+"oak_oak_lod1": {
+"generate/lightmap_uv": 0,
+"generate/lods": 2,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://demo/foliage/models/oak_lod1.res",
+"save_to_file/path": "uid://cvx344mo6o4bo"
+},
+"oak_oak_lod2": {
+"generate/lightmap_uv": 0,
+"generate/lods": 2,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://demo/foliage/models/oak_lod2.res",
+"save_to_file/path": "uid://dfbdgncs7x3i7"
+},
+"oak_oak_lod3": {
+"generate/lightmap_uv": 0,
+"generate/lods": 2,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://demo/foliage/models/oak_lod3.res",
+"save_to_file/path": "uid://bkrfgv5lnqol7"
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1
+gltf/texture_map_mode=1

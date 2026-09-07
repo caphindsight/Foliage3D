@@ -1,0 +1,17 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dq8x3o56lt7sj"]
+
+[ext_resource type="Shader" uid="uid://deqrdkx56p5bm" path="res://demo/foliage/shaders/tree_trunk.gdshader" id="1_0wjqw"]
+[ext_resource type="Texture2D" uid="uid://bo47j02o81kxt" path="res://demo/foliage/textures/oak_stump_albedo.png" id="2_sura3"]
+[ext_resource type="Texture2D" uid="uid://dk3w2eya43b2n" path="res://demo/foliage/textures/oak_stump_nr.png" id="3_k2hvd"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_0wjqw")
+shader_parameter/wind_enabled = true
+shader_parameter/wind_power_scale = 0.01
+shader_parameter/toon_normals = false
+shader_parameter/wind_turbulence_scale = 1.0
+shader_parameter/albedo_modulate = Color(1, 1, 1, 1)
+shader_parameter/albedo_tex = ExtResource("2_sura3")
+shader_parameter/normal_roughness_tex = ExtResource("3_k2hvd")
+shader_parameter/normal_scale = 1.0

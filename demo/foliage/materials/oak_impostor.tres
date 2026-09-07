@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://ctkh857f6k2da"]
+
+[ext_resource type="Shader" uid="uid://dwshsb7c5duck" path="res://demo/foliage/shaders/tree_impostor.gdshader" id="1_uv0yr"]
+[ext_resource type="Texture2D" uid="uid://brrd3h8jbjgkr" path="res://demo/foliage/textures/oak_impostor_albedo.png" id="2_2d28k"]
+[ext_resource type="Texture2D" uid="uid://c80jwl8kbhwww" path="res://demo/foliage/textures/oak_impostor_nr.png" id="3_npmr6"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_uv0yr")
+shader_parameter/albedo_modulate = Color(1, 1, 1, 1)
+shader_parameter/albedo_tex = ExtResource("2_2d28k")
+shader_parameter/normal_roughness_tex = ExtResource("3_npmr6")
+shader_parameter/normal_scale = 1.0
+shader_parameter/alpha_scissor_threshold = 0.5

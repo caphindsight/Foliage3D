@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Foliage3D"
-run/main_scene="uid://cc7u2p2bjth4h"
+run/main_scene="uid://ywaui7177d8k"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -96,3 +96,26 @@ e={
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+
+[shader_globals]
+
+wind_power={
+"type": "float",
+"value": 0.2
+}
+wind_sway_amplitudes={
+"type": "vec4",
+"value": Vector4(0.4, 0.1, 0.1, 0.1)
+}
+wind_sway_frequencies={
+"type": "vec4",
+"value": Vector4(2.9, 5.4, 7.8, 10.2)
+}
+wind_velocity={
+"type": "vec2",
+"value": Vector2(1, 1)
+}
+wind_turbulence={
+"type": "float",
+"value": 0.5
+}
