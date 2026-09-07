@@ -10,12 +10,13 @@ extends FoliageLayer
 
 func place(placement: FoliagePlacement) -> void:
 	var collections_thread_local: Array[FoliageCollectionBasic] = collections.duplicate_deep()
-	for i in len(collections_thread_local):
+	var n_col: int = len(collections_thread_local)
+	var probabilities: PackedFloat64Array
+	probabilities.resize(n_col)
+	for i in n_col:
 		collections_thread_local[i].precompute()
 	var rng := FoliageRandom.new(772364723)
 	for i in placement.size():
-		var probabilities: PackedFloat64Array
-		probabilities.resize(len(collections_thread_local))
 		for j in len(probabilities):
 			probabilities[j] = collections_thread_local[j].get_collection_probability(placement, i)
 		var total_probability: float = 0
