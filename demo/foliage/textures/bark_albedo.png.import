@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bo47j02o81kxt"
-path.s3tc="res://.godot/imported/oak_stump_albedo.png-2306d3c5c559bdce6cfb3372e5ad14c3.s3tc.ctex"
+uid="uid://goasm3tuylxh"
+path.s3tc="res://.godot/imported/bark_albedo.png-6bf8fa8c7b74d4bde5c3daff2cb24937.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://demo/foliage/textures/oak_stump_albedo.png"
-dest_files=["res://.godot/imported/oak_stump_albedo.png-2306d3c5c559bdce6cfb3372e5ad14c3.s3tc.ctex"]
+source_file="res://demo/foliage/textures/bark_albedo.png"
+dest_files=["res://.godot/imported/bark_albedo.png-6bf8fa8c7b74d4bde5c3daff2cb24937.s3tc.ctex"]
 
 [params]
 

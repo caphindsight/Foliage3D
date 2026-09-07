@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://clt7tqfr5xm4c" path="res://addons/foliage_3d/scripts/foliage_asset.gd" id="8_xm42s"]
 [ext_resource type="Resource" uid="uid://02ukd0ilxmyg" path="res://demo/foliage/assets/grass.tres" id="9_tdg64"]
 [ext_resource type="Resource" uid="uid://baahmr8b34bm8" path="res://demo/foliage/assets/oak.tres" id="10_xm42s"]
+[ext_resource type="Resource" uid="uid://qq08j03t570w" path="res://demo/foliage/assets/pine.tres" id="11_tdg64"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_5hjng"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -144,8 +145,8 @@ point_count = 2
 
 [sub_resource type="Resource" id="Resource_1rqa4"]
 script = ExtResource("7_1rqa4")
-assets = Array[ExtResource("8_xm42s")]([ExtResource("10_xm42s")])
-weights = PackedFloat32Array(1)
+assets = Array[ExtResource("8_xm42s")]([ExtResource("10_xm42s"), ExtResource("11_tdg64")])
+weights = PackedFloat32Array(1, 3)
 textures = PackedInt32Array(0)
 height_density_curve = SubResource("Curve_6fci4")
 slope_density_curve = SubResource("Curve_xm42s")

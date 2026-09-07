@@ -1,8 +1,8 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://dq8x3o56lt7sj"]
 
 [ext_resource type="Shader" uid="uid://deqrdkx56p5bm" path="res://demo/foliage/shaders/tree_trunk.gdshader" id="1_0wjqw"]
-[ext_resource type="Texture2D" uid="uid://bo47j02o81kxt" path="res://demo/foliage/textures/oak_stump_albedo.png" id="2_sura3"]
-[ext_resource type="Texture2D" uid="uid://dk3w2eya43b2n" path="res://demo/foliage/textures/oak_stump_nr.png" id="3_k2hvd"]
+[ext_resource type="Texture2D" uid="uid://bo47j02o81kxt" path="res://demo/foliage/textures/stump_albedo.png" id="2_sura3"]
+[ext_resource type="Texture2D" uid="uid://dk3w2eya43b2n" path="res://demo/foliage/textures/stump_nr.png" id="3_k2hvd"]
 
 [resource]
 render_priority = 0
