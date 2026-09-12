@@ -14,6 +14,9 @@ extends Resource
 ## Assets will be only placed on the selected terrain texture ids.
 @export var textures: PackedInt32Array
 
+## Base probability of finding an asset of this collection at a lattice point.
+@export var density: float = 1.0
+
 ## If specified, allows specifying the dependence of the asset density on height.
 @export var height_density_curve: Curve
 
@@ -42,7 +45,7 @@ func precompute() -> void:
 
 ## Returns the probability of an asset from this collection to be placed at a specific location.
 func get_collection_probability(placement: FoliagePlacement, i: int) -> float:
-	var probability: float = 1.0
+	var probability: float = density
 	if texture_mask != 0:
 		var texture_probability: float = 0.0
 		var base_id: int = placement.base_texture_ids[i]

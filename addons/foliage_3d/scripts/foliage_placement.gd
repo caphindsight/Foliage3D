@@ -11,6 +11,11 @@ var base_texture_ids: PackedInt32Array
 var overlay_texture_ids: PackedInt32Array
 var texture_blend_amounts: PackedFloat32Array
 
+var _random_pitch := FoliageRandom.new(-3030054608389)
+var _random_pitch_axis := FoliageRandom.new(5851782439795)
+var _random_yaw := FoliageRandom.new(5558960081466)
+var _random_scale := FoliageRandom.new(8422615989223)
+
 func _init(p_terrain_data: Terrain3DData) -> void:
 	terrain_data = p_terrain_data
 
@@ -73,20 +78,20 @@ func place_asset(i: int, asset: FoliageAsset) -> void:
 	var transform := transforms[i]
 	var normal := normals[i]
 	var position := Vector2(transform.origin.x, transform.origin.z)
-	var random_pitch := FoliageRandom.new(-3030054608389)
-	var random_pitch_axis := FoliageRandom.new(5851782439795)
-	var random_yaw := FoliageRandom.new(5558960081466)
-	var random_scale := FoliageRandom.new(8422615989223)
 	var pitch_axis := Vector3.RIGHT
 	if asset.randomize_pitch:
-		pitch_axis = pitch_axis.rotated(Vector3.UP, random_pitch_axis.prng2(position) * TAU)
-	var pitch_rotation: float = lerpf(asset.pitch_min, asset.pitch_max, random_pitch.prng2(position))
+		_random_pitch_axis.seed_with_vec2(position)
+		pitch_axis = pitch_axis.rotated(Vector3.UP, _random_pitch_axis.randf() * TAU)
+	_random_pitch.seed_with_vec2(position)
+	var pitch_rotation: float = lerpf(asset.pitch_min, asset.pitch_max, _random_pitch.randf())
 	transform = transform.rotated_local(pitch_axis, pitch_rotation)
 	if asset.randomize_yaw:
-		transform = transform.rotated_local(Vector3.UP, random_yaw.prng2(position) * TAU)
+		_random_yaw.seed_with_vec2(position)
+		transform = transform.rotated_local(Vector3.UP, _random_yaw.randf() * TAU)
 	var normal_align_quat := Quaternion.IDENTITY.slerp(Quaternion(Vector3.UP, normal), asset.align_to_normal)
 	transform = Transform3D(Basis(normal_align_quat) * transform.basis, transform.origin)
-	var scale: float = lerpf(asset.scale_min, asset.scale_max, random_scale.prng2(position))
+	_random_scale.seed_with_vec2(position)
+	var scale: float = lerpf(asset.scale_min, asset.scale_max, _random_scale.randf())
 	transform = transform.scaled_local(Vector3(scale, scale, scale))
 	transforms[i] = transform
 

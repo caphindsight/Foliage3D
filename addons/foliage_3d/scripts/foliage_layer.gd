@@ -64,18 +64,21 @@ func prepare_placement(rect: Rect2) -> FoliagePlacement:
 	var j1 := floori(y1 / lattice_spacing)
 	var y2 := rect.end.y + lattice_spacing * 1.5
 	var j2 := ceili(y2 / lattice_spacing)
+	var rand_jitter_x := FoliageRandom.new(571658977732)
+	var rand_jitter_y := FoliageRandom.new(4319594216159)
+	var rand_keep := FoliageRandom.new(2812107841962)
 	for di in (i2 - i1):
 		var i: int = i1 + di
 		for dj in (j2 - j1):
 			var j: int = j1 + dj
 			var position := Vector2(lattice_spacing * i, lattice_spacing * j)
-			var rand_jitter_x := FoliageRandom.new(571658977732)
-			var rand_jitter_y := FoliageRandom.new(4319594216159)
-			var rand_keep := FoliageRandom.new(2812107841962)
-			var jitter := Vector2(rand_jitter_x.prng2(position), rand_jitter_y.prng2(position))
+			rand_jitter_x.seed_with_vec2(position)
+			rand_jitter_y.seed_with_vec2(position)
+			rand_keep.seed_with_vec2(position)
+			var jitter := Vector2(rand_jitter_x.randf(), rand_jitter_y.randf())
 			jitter = Vector2(-1, -1) + jitter * 2
 			position = position + jitter * lattice_spacing * randomness
-			var keep_rnd: float = rand_keep.prng2(position)
+			var keep_rnd: float = rand_keep.randf()
 			if keep_rnd >= keep: continue
 			if not rect.has_point(position): continue
 			var position3 := Vector3(position.x, 0, position.y)

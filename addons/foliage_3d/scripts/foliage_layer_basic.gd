@@ -29,7 +29,8 @@ func place(placement: FoliagePlacement) -> void:
 		var picked_collection: int = -1
 		var cumulative_probability: float = 0
 		var pos := placement.get_transform(i).origin
-		var uniform: float = rng.prng2(Vector2(pos.x, pos.z))
+		rng.seed_with_vec2(Vector2(pos.x, pos.z))
+		var uniform: float = rng.randf()
 		for j in len(probabilities):
 			cumulative_probability += probabilities[j]
 			if cumulative_probability > uniform:

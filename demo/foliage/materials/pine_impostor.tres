@@ -10,5 +10,5 @@ shader = ExtResource("1_o3he3")
 shader_parameter/albedo_modulate = Color(1, 1, 1, 1)
 shader_parameter/albedo_tex = ExtResource("2_ef5dt")
 shader_parameter/normal_roughness_tex = ExtResource("3_f8k0w")
-shader_parameter/normal_scale = 1.0
+shader_parameter/normal_scale = 16.0
 shader_parameter/alpha_scissor_threshold = 0.5
