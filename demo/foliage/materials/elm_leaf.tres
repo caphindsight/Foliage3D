@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://o60lsxps14r2"]
+
+[ext_resource type="Shader" uid="uid://c8q1kaltc84a7" path="res://demo/foliage/shaders/tree_leaves.gdshader" id="1_364se"]
+[ext_resource type="Texture2D" uid="uid://8543bnlfkhch" path="res://demo/foliage/textures/elm_leaf_albedo.png" id="2_364se"]
+[ext_resource type="Texture2D" uid="uid://exdlpjxdvo7x" path="res://demo/foliage/textures/elm_leaf_nr.png" id="3_q3mj1"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_364se")
+shader_parameter/wind_enabled = true
+shader_parameter/wind_power_scale = 0.1
+shader_parameter/toon_normals = false
+shader_parameter/wind_turbulence_scale = 1.0
+shader_parameter/albedo_modulate = Color(1, 1, 1, 1)
+shader_parameter/albedo_tex = ExtResource("2_364se")
+shader_parameter/alpha_scissor_threshold_lo = 0.1
+shader_parameter/alpha_scissor_threshold_hi = 0.5
+shader_parameter/characteristic_distance = 50.0
+shader_parameter/normal_roughness_tex = ExtResource("3_q3mj1")
+shader_parameter/normal_scale = 1.0

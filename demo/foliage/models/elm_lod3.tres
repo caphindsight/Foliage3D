@@ -1,0 +1,8 @@
+[gd_resource type="QuadMesh" format=3 uid="uid://dmrrya6tsi8j1"]
+
+[ext_resource type="Material" uid="uid://fypmbx8h18vr" path="res://demo/foliage/materials/elm_impostor.tres" id="1_b010d"]
+
+[resource]
+material = ExtResource("1_b010d")
+size = Vector2(4.5, 9)
+center_offset = Vector3(0, 4, 0)

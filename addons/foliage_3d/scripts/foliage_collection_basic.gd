@@ -1,6 +1,7 @@
 ## A readily available implementation for the [FoliageLayerBasic].
 ## This should be enough for most basic use cases, like placing some trees and grass.
 ## For more advanced use cases, implement your own subclass of [FoliageLayer].
+@icon("res://addons/foliage_3d/icons/foliage_collection.svg")
 class_name FoliageCollectionBasic
 extends Resource
 

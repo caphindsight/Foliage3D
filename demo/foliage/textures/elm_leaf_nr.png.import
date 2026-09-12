@@ -2,28 +2,29 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bkjx71jiw8836"
-path="res://.godot/imported/screenshot_02.png-c5280271b19497910db5b2434a23f7f9.ctex"
+uid="uid://exdlpjxdvo7x"
+path.s3tc="res://.godot/imported/elm_leaf_nr.png-c2c493adc94a9b85a4d08da1fcaefe22.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
-source_file="res://screenshots/screenshot_02.png"
-dest_files=["res://.godot/imported/screenshot_02.png-c5280271b19497910db5b2434a23f7f9.ctex"]
+source_file="res://demo/foliage/textures/elm_leaf_nr.png"
+dest_files=["res://.godot/imported/elm_leaf_nr.png-c2c493adc94a9b85a4d08da1fcaefe22.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=2
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -37,4 +38,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

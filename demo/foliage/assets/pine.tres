@@ -6,7 +6,7 @@
 [ext_resource type="ArrayMesh" uid="uid://bx1fp3y5scy1p" path="res://demo/foliage/models/pine_lod2.res" id="3_6wojw"]
 [ext_resource type="ArrayMesh" uid="uid://jp3pnaoajat8" path="res://demo/foliage/models/pine_lod3.res" id="4_wpnbr"]
 [ext_resource type="QuadMesh" uid="uid://b8i4j6eygdj3e" path="res://demo/foliage/models/pine_lod4.tres" id="5_ecrcu"]
-[ext_resource type="PackedScene" uid="uid://csvp7ka4asd13" path="res://demo/foliage/models/PineInteractive.tscn" id="6_4xhev"]
+[ext_resource type="PackedScene" uid="uid://csvp7ka4asd13" path="res://demo/foliage/models/pine_interactive.tscn" id="6_4xhev"]
 
 [resource]
 script = ExtResource("1_dm204")

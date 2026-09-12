@@ -2,16 +2,17 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bkjx71jiw8836"
-path="res://.godot/imported/screenshot_02.png-c5280271b19497910db5b2434a23f7f9.ctex"
+uid="uid://bvnmkva6fjqjp"
+path="res://.godot/imported/foliage_collection.svg-f005830dede776a3c91567f163ff4b4c.ctex"
 metadata={
+"has_editor_variant": true,
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://screenshots/screenshot_02.png"
-dest_files=["res://.godot/imported/screenshot_02.png-c5280271b19497910db5b2434a23f7f9.ctex"]
+source_file="res://addons/foliage_3d/icons/foliage_collection.svg"
+dest_files=["res://.godot/imported/foliage_collection.svg-f005830dede776a3c91567f163ff4b4c.ctex"]
 
 [params]
 
@@ -38,3 +39,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=true
+editor/convert_colors_with_editor_theme=true
