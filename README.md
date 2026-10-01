@@ -65,12 +65,12 @@ You can also run `gd++ build` inside `addons/foliage_3d`. The build puts the GDE
 Other useful builds:
 
 ```sh
-gd++ build --proj --ship --for l.x64 w.x64      # optimized release builds for Linux and Windows
-gd++ build --proj --profile foliage --print     # print timing tables of the foliage code while the game runs
-gd++ build --proj --clean                       # rebuild from scratch
+gd++ build --proj --ship --for l.x64 w.x64            # optimized release builds for Linux and Windows
+gd++ build --proj --opt --profile foliage --print     # print timing tables of the optimized foliage code while the game runs
+gd++ build --proj --clean                             # rebuild from scratch
 ```
 
-Run `gd++ build --help` for all options and `gd++ ls` for an overview of the project.
+Run `gd++ build --help` for all options, and `gd++ man build` for detailed documentation.
 
 ## Usage
 
