@@ -1,14 +1,12 @@
-[gd_resource type="Resource" script_class="FoliageAsset" format=3 uid="uid://57ed1fkp8r6h"]
+[gd_resource type="FoliageAsset" format=3 uid="uid://57ed1fkp8r6h"]
 
 [ext_resource type="ArrayMesh" uid="uid://dhtxpmahasqj6" path="res://demo/foliage/models/elm_lod0.res" id="1_sarwy"]
 [ext_resource type="ArrayMesh" uid="uid://cbel5nob58w8e" path="res://demo/foliage/models/elm_lod1.res" id="2_76boy"]
 [ext_resource type="ArrayMesh" uid="uid://64i2hv5bbi3u" path="res://demo/foliage/models/elm_lod2.res" id="3_vve47"]
 [ext_resource type="QuadMesh" uid="uid://dmrrya6tsi8j1" path="res://demo/foliage/models/elm_lod3.tres" id="4_etjwp"]
 [ext_resource type="PackedScene" uid="uid://clb2e2hu2fn1r" path="res://demo/foliage/models/elm_interactive.tscn" id="5_sarwy"]
-[ext_resource type="Script" uid="uid://clt7tqfr5xm4c" path="res://addons/foliage_3d/scripts/foliage_asset.gd" id="7_b5ys6"]
 
 [resource]
-script = ExtResource("7_b5ys6")
 lods = Array[Mesh]([ExtResource("1_sarwy"), ExtResource("2_76boy"), ExtResource("3_vve47"), ExtResource("4_etjwp")])
 lod_map = PackedInt32Array(-1, 0, 1, 2, 2, 3, 3)
 scene = ExtResource("5_sarwy")
@@ -16,4 +14,3 @@ pitch_max = 0.00872664625997164
 scale_min = 0.8
 scale_max = 1.2
 align_to_normal = 0.2
-metadata/_custom_type_script = "uid://clt7tqfr5xm4c"

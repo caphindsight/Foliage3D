@@ -1,0 +1,47 @@
+/// This should be enough for most basic use cases, like placing some trees and grass.
+/// For more advanced use cases, implement your own subclass of [FoliageLayer].
+@profile("foliage")
+class_name FoliageLayerBasic
+extends FoliageLayer
+
+/// Use these collections.
+/// [FoliageLayerBasic] will first pick a collection based on individual probability densities for each collection,
+/// and then pick a [FoliageAsset] inside that collection based on the probabilities of assets within the collection.
+@export var collections: Array[FoliageCollectionBasic]
+
+@final @override
+func _place(placement: FoliagePlacement) -> void {
+  LocalVector<Ref<FoliageCollectionBasic>> cols;
+  for (int64_t j = 0; j < collections.size(); j++) {
+    if (Ref<FoliageCollectionBasic> col = collections[j] as Ref<FoliageCollectionBasic>; col.is_valid()) {
+      cols.push_back(col);
+    }
+  }
+  LocalVector<double> probabilities;
+  probabilities.resize(cols.size());
+
+  Ref<FoliageRandom> rng = FoliageRandom::create(772364723);
+  for (int64_t i = 0; i < placement->size(); i++) {
+    double total_probability = 0;
+    for (uint32_t j = 0; j < cols.size(); j++) {
+      probabilities[j] = cols[j]->get_collection_probability(placement, i);
+      total_probability += probabilities[j];
+    }
+    // If they sum up to >1, normalize them.
+    double scale = total_probability > 1 ? 1 / total_probability : 1;
+
+    Vector3 pos = placement->get_transform(i).origin;
+    rng->seed_with_vec2(Vector2(pos.x, pos.z));
+    double uniform = rng->randf();
+    // Pick the collection that the uniform number falls into,
+    // then rescale the number to [0..1) within it to pick the asset.
+    for (uint32_t j = 0; j < cols.size(); j++) {
+      double p = probabilities[j] * scale;
+      if (uniform < p) {
+        placement->place_asset(i, cols[j]->get_asset(uniform / p));
+        break;
+      }
+      uniform -= p;
+    }
+  }
+}

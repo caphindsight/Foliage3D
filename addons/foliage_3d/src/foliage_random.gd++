@@ -1,0 +1,66 @@
+/// A random number generator that can be seeded with positions.
+/// The same position (up to [member sensitivity]) always yields the same random sequence,
+/// which makes foliage placement deterministic, no matter which chunk asks for it.
+@profile("foliage")
+class_name FoliageRandom
+extends RandomNumberGenerator
+
+/// Every position seed is combined with this one, so that generators with different master seeds are independent.
+var master_seed: int
+
+/// Positions are rounded to multiples of this value before hashing.
+var sensitivity: float = 1e-3
+
+/// Creates a generator with the given master seed.
+@static
+func create(master: int) -> FoliageRandom {
+  Ref<FoliageRandom> rng;
+  rng.instantiate();
+  rng->master_seed = splitmix_hash(splitmix_hash(master));
+  return rng;
+}
+
+// Integer math wraps around like in GDScript: multiplications and additions go through uint64_t.
+
+@static
+func splitmix_hash(x: int) -> int {
+  x ^= x >> 30;
+  x = ((x as uint64_t) * 4564476756301768121ull) as int64_t;
+  x ^= x >> 27;
+  x = ((x as uint64_t) * 1499779743744070123ull) as int64_t;
+  x ^= x >> 31;
+  return x;
+}
+
+@static
+func splitmix_combine(a: int, b: int) -> int {
+  return a ^ ((b as uint64_t) + 2177342782468422677ull + ((a as uint64_t) << 6) + ((a >> 2) as uint64_t)) as int64_t;
+}
+
+func seed_with_float(value: float) -> void {
+  reseed(quantize(value));
+}
+
+func seed_with_vec2(value: Vector2) -> void {
+  reseed(splitmix_combine(quantize(value.x), quantize(value.y)));
+}
+
+func seed_with_vec3(value: Vector3) -> void {
+  reseed(splitmix_combine(quantize(value.x), splitmix_combine(quantize(value.y), quantize(value.z))));
+}
+
+func seed_with_vec4(value: Vector4) -> void {
+  reseed(splitmix_combine(quantize(value.x),
+      splitmix_combine(quantize(value.y), splitmix_combine(quantize(value.z), quantize(value.w)))));
+}
+
+decl {
+  int64_t quantize(double value) const {
+    return splitmix_hash(Math::round(value / sensitivity) as int64_t);
+  }
+
+  void reseed(int64_t hash) {
+    set_seed(splitmix_combine(master_seed, hash));
+    randf();  // Skip the first value, which is poorly mixed right after seeding.
+  }
+}

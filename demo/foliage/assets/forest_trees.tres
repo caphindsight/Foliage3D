@@ -1,9 +1,7 @@
-[gd_resource type="Resource" script_class="FoliageCollectionBasic" format=3 uid="uid://bv8am0ksysakj"]
+[gd_resource type="FoliageCollectionBasic" format=3 uid="uid://bv8am0ksysakj"]
 
-[ext_resource type="Script" uid="uid://clt7tqfr5xm4c" path="res://addons/foliage_3d/scripts/foliage_asset.gd" id="1_ejary"]
 [ext_resource type="Resource" uid="uid://baahmr8b34bm8" path="res://demo/foliage/assets/oak.tres" id="2_j6eqo"]
 [ext_resource type="Resource" uid="uid://qq08j03t570w" path="res://demo/foliage/assets/pine.tres" id="3_xnpqg"]
-[ext_resource type="Script" uid="uid://dfxr8qtg4c8lw" path="res://addons/foliage_3d/scripts/foliage_collection_basic.gd" id="4_1avs3"]
 [ext_resource type="Resource" uid="uid://57ed1fkp8r6h" path="res://demo/foliage/assets/elm.tres" id="4_j6eqo"]
 
 [sub_resource type="Curve" id="Curve_6fci4"]
@@ -17,10 +15,8 @@ _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(90, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [resource]
-script = ExtResource("4_1avs3")
-assets = Array[ExtResource("1_ejary")]([ExtResource("2_j6eqo"), ExtResource("3_xnpqg"), ExtResource("4_j6eqo")])
+assets = Array[FoliageAsset]([ExtResource("2_j6eqo"), ExtResource("3_xnpqg"), ExtResource("4_j6eqo")])
 weights = PackedFloat32Array(2, 1, 2)
 textures = PackedInt32Array(0)
 height_density_curve = SubResource("Curve_6fci4")
 slope_density_curve = SubResource("Curve_xm42s")
-metadata/_custom_type_script = "uid://dfxr8qtg4c8lw"

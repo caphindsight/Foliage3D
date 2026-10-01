@@ -1,0 +1,251 @@
+/// Procedurally generates foliage in a 3D scene using a quad tree.
+/// The world is subdivided into square chunks organized into multiple levels of detail (LODs).
+/// LOD-0 represents the smallest and most detailed chunks. These are the ones closest to the camera.
+/// Each successive LOD increases the chunk linear size by 2x (so the covered area increases by 4x).
+/// By itself, [FoliagePartition] simply partitions the world into invisible chunks.
+/// To place foliage on chunks, add and configure a [FoliageLayer] child node.
+/// Multiple [FoliageLayer] nodes can be used to place different types of foliage in parallel.
+@icon("pkg://icons/foliage_partition.svg")
+@profile("foliage")
+class_name FoliagePartition
+extends Node
+
+/// Reference to the [Terrain3D] node. The foliage will spawn on the terrain.
+/// Terrain3D is a required dependency, Foliage3D doesn't work without it.
+/// See [url]https://store.godotengine.org/asset/tokisangames/terrain3d[/url].
+@export var terrain: Terrain3D
+
+/// The linear size of a LOD-0 chunk, measured in world units, for both horizontal directions X and Z.
+/// The linear size of a LOD-k chunk is lod0_size * 2^k.
+@export var lod0_size: float = 32
+
+/// The linear size of the largest visible chunk in the quad tree.
+/// Must cover the entire world (centered at the coordinate origin).
+@export var horizon_size: float = 4096
+
+/// 2D angle limit for a single chunk, when viewed from the camera position.
+/// When the chunk's angular resolution is lower than this value,
+/// its four children chunks are merged back into it.
+/// Controls how aggressively the quad tree culls LODs.
+/// Values that are too low lead to lots of highly detailed chunks and poor performance.
+/// Values that are too high lead to poor visual quality.
+/// We have two thresholds: [b]lo[/b] for merging chunks and [b]hi[/b] for splitting chunks.
+/// The [b]lo[/b] threshold should be below the [b]hi[/b] threshold.
+@export_range(0, 180, 0.1, "radians_as_degrees") var chunk_angular_threshold_lo: float = Math::deg_to_rad(60.0)
+
+/// 2D angle limit for a single chunk, when viewed from the camera position.
+/// When the chunk's angular resolution is higher than this value,
+/// the chunk is subdivided into four lower-LOD chunks.
+/// See [member chunk_angular_threshold_lo].
+@export_range(0, 180, 0.1, "radians_as_degrees") var chunk_angular_threshold_hi: float = Math::deg_to_rad(70.0)
+
+/// Emitted on every tick if all foliage chunks are ready.
+/// Mostly useful for synchronizing the loading screen like so:
+/// [codeblock]
+/// show_loading_screen()
+/// await foliage_partition.foliage_is_ready
+/// hide_loading_screen()
+/// [/codeblock]
+signal foliage_is_ready
+
+@global decl {
+  #include <memory>
+  #include <vector>
+}
+
+decl {
+  // The chunk of one layer on one quad.
+  struct Chunk {
+    Async<Node3D *> task;    // Running while the chunk is built; empty once it's claimed, or if the LOD is hidden.
+    Node3D *node = nullptr;  // The built chunk, a child of its layer.
+  };
+
+  struct Quad {
+    Rect2 rect;
+    int64_t lod = 0;
+    std::vector<Chunk> chunks;  // One per layer.
+    std::unique_ptr<Quad> children[4];
+    bool has_children() const { return children[0] != nullptr; }
+  };
+
+  std::vector<FoliageLayer *> layers_;
+  std::unique_ptr<Quad> root_;
+  std::vector<Async<Node3D *>> orphans_;  // Tasks of dropped chunks that still run.
+  Vector2 observer_;
+
+  // Creates a quad, and starts building its chunks on all layers.
+  std::unique_ptr<Quad> make_quad(const Rect2 &rect, int64_t lod) {
+    auto quad = std::make_unique<Quad>();
+    quad->rect = rect;
+    quad->lod = lod;
+    quad->chunks.resize(layers_.size());
+    for (size_t i = 0; i < layers_.size(); i++) {
+      if (layers_[i]->shows_lod(lod)) {
+        quad->chunks[i].task = layers_[i]->build_chunk(rect, lod);
+      }
+    }
+    return quad;
+  }
+
+  // Frees the chunks of the quad's subtree. Running tasks are cancelled, and freed by _process once they're done.
+  void drop_chunks(Quad &quad) {
+    for (auto &child : quad.children) {
+      if (child) {
+        drop_chunks(*child);
+      }
+    }
+    for (Chunk &chunk : quad.chunks) {
+      if (chunk.node) {
+        chunk.node->queue_free();
+      }
+      if (chunk.task) {
+        cancel chunk.task;
+        orphans_.push_back(chunk.task);
+      }
+    }
+  }
+
+  // Frees all chunks, waiting for the running tasks.
+  void clear() {
+    if (root_) {
+      drop_chunks(*root_);
+      root_.reset();
+    }
+    for (Async<Node3D *> &task : orphans_) {
+      task.wait();
+      if (Node3D *node = claim task) {
+        memdelete(node);
+      }
+    }
+    orphans_.clear();
+  }
+
+  // The largest angle under which the observer sees two corners of the rect.
+  double angular_size(const Rect2 &rect) const {
+    if (rect.has_point(observer_)) {
+      return Math::PI;
+    }
+    Vector2 p = rect.position;
+    Vector2 q = rect.get_end();
+    Vector2 corners[4] = {p - observer_, q - observer_, Vector2(p.x, q.y) - observer_, Vector2(q.x, p.y) - observer_};
+    double res = 0;
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < i; j++) {
+        res = MAX(res, Math::abs(corners[i].angle_to(corners[j])));
+      }
+    }
+    return res;
+  }
+
+  // Splits quads that look big and merges quads that look small.
+  void restructure(Quad &quad) {
+    double angle = angular_size(quad.rect);
+    if (quad.lod > 0 && angle > chunk_angular_threshold_hi && !quad.has_children()) {
+      Vector2 size = quad.rect.size / 2;
+      for (int k = 0; k < 4; k++) {
+        Vector2 offset(k & 1 ? size.x : 0, k & 2 ? size.y : 0);
+        quad.children[k] = make_quad(Rect2(quad.rect.position + offset, size), quad.lod - 1);
+      }
+    } else if (quad.lod > 0 && angle < chunk_angular_threshold_lo && quad.has_children()) {
+      for (auto &child : quad.children) {
+        drop_chunks(*child);
+        child.reset();
+      }
+    }
+    if (quad.has_children()) {
+      for (auto &child : quad.children) {
+        restructure(*child);
+      }
+    }
+  }
+
+  // Adds the chunk to its layer once it's built. Returns whether it's ready.
+  bool poll(Chunk &chunk, FoliageLayer *layer) {
+    if (is_done chunk.task) {
+      chunk.node = claim chunk.task;
+      if (chunk.node) {
+        layer->add_child(chunk.node);
+      }
+    }
+    return !chunk.task;
+  }
+
+  // Shows the most detailed ready chunks, and hides the rest. Returns whether the whole subtree is ready.
+  bool update_visibility(Quad &quad) {
+    bool subtree_ready = true;
+    for (auto &child : quad.children) {
+      if (child) {
+        subtree_ready = update_visibility(*child) && subtree_ready;
+      }
+    }
+    for (size_t i = 0; i < layers_.size(); i++) {
+      Chunk &chunk = quad.chunks[i];
+      if (!poll(chunk, layers_[i])) {
+        subtree_ready = false;
+        continue;
+      }
+      if (!chunk.node) {
+        continue;
+      }
+      bool children_ready = quad.has_children();
+      for (auto &child : quad.children) {
+        children_ready = children_ready && !child->chunks[i].task;
+      }
+      // Until all children are ready, cover their area with this chunk instead.
+      chunk.node->set_visible(!children_ready);
+      if (quad.has_children() && !children_ready) {
+        for (auto &child : quad.children) {
+          if (Node3D *node = child->chunks[i].node) {
+            node->hide();
+          }
+        }
+      }
+    }
+    return subtree_ready;
+  }
+}
+
+// Before the layers (our children) are freed, since tasks use them.
+notif(PREDELETE) {
+  clear();
+}
+
+@override
+func _ready() -> void {
+  clear();
+  layers_.clear();
+  for (int64_t i = 0; i < get_child_count(); i++) {
+    if (FoliageLayer *layer = get_child(i) as FoliageLayer *) {
+      layers_.push_back(layer);
+      if (terrain) {
+        layer->terrain_data = terrain->get_data();
+      }
+    }
+  }
+  int64_t root_lod = Math::round(Math::log(horizon_size / lod0_size) / Math::LN2) as int64_t;
+  double root_size = lod0_size * (1ll << root_lod);
+  root_ = make_quad(Rect2(-root_size / 2, -root_size / 2, root_size, root_size), root_lod);
+}
+
+@override
+func _process(delta: float) -> void {
+  std::erase_if(orphans_, [](Async<Node3D *> &task) {
+    if (!is_done task) {
+      return false;
+    }
+    if (Node3D *node = claim task) {
+      memdelete(node);
+    }
+    return true;
+  });
+
+  Viewport *viewport = get_viewport();
+  Camera3D *camera = viewport ? viewport->get_camera_3d() : nullptr;
+  Vector3 observer = camera ? camera->get_global_position() : Vector3();
+  observer_ = Vector2(observer.x, observer.z);
+
+  restructure(*root_);
+  if (update_visibility(*root_)) {
+    emit foliage_is_ready();
+  }
+}

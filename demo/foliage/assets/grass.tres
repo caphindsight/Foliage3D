@@ -1,15 +1,12 @@
-[gd_resource type="Resource" script_class="FoliageAsset" format=3 uid="uid://02ukd0ilxmyg"]
+[gd_resource type="FoliageAsset" format=3 uid="uid://02ukd0ilxmyg"]
 
-[ext_resource type="Script" uid="uid://clt7tqfr5xm4c" path="res://addons/foliage_3d/scripts/foliage_asset.gd" id="1_pc8be"]
 [ext_resource type="ArrayMesh" uid="uid://c36jvt6fu01wf" path="res://demo/foliage/models/grass_lod0.res" id="1_sb77r"]
 [ext_resource type="ArrayMesh" uid="uid://1lm2u5qg7aic" path="res://demo/foliage/models/grass_lod1.res" id="2_avnq0"]
 
 [resource]
-script = ExtResource("1_pc8be")
 lods = Array[Mesh]([ExtResource("1_sb77r"), ExtResource("2_avnq0")])
 lod_map = PackedInt32Array(0, 1)
 pitch_max = 0.01745329251994329
 scale_min = 1.8
 scale_max = 2.2
 align_to_normal = 0.85
-metadata/_custom_type_script = "uid://clt7tqfr5xm4c"

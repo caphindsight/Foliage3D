@@ -4,12 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://dnvmvs4gjix34" path="res://demo/terrain/textures/forest_nr.png" id="2_u10mr"]
 [ext_resource type="Texture2D" uid="uid://dcr5jmcydhe0k" path="res://demo/terrain/textures/rocks_ah.png" id="3_onu7k"]
 [ext_resource type="Texture2D" uid="uid://pou2l6mmbaq7" path="res://demo/terrain/textures/rocks_nr.png" id="4_s1s6j"]
-[ext_resource type="Script" uid="uid://wwjjx2yy85x4" path="res://addons/foliage_3d/scripts/foliage_partition.gd" id="5_onvmd"]
 [ext_resource type="PackedScene" uid="uid://b5u34uql6v2vc" path="res://demo/observer/observer.tscn" id="5_u10mr"]
-[ext_resource type="Script" uid="uid://jwbpqi7rqtj6" path="res://addons/foliage_3d/scripts/foliage_layer_basic.gd" id="6_oeqrt"]
 [ext_resource type="Script" uid="uid://dva1yvp2uents" path="res://demo/fps_label.gd" id="6_onu7k"]
-[ext_resource type="Script" uid="uid://dfxr8qtg4c8lw" path="res://addons/foliage_3d/scripts/foliage_collection_basic.gd" id="7_1rqa4"]
-[ext_resource type="Script" uid="uid://clt7tqfr5xm4c" path="res://addons/foliage_3d/scripts/foliage_asset.gd" id="8_xm42s"]
 [ext_resource type="Resource" uid="uid://02ukd0ilxmyg" path="res://demo/foliage/assets/grass.tres" id="9_tdg64"]
 [ext_resource type="Resource" uid="uid://bv8am0ksysakj" path="res://demo/foliage/assets/forest_trees.tres" id="10_xm42s"]
 
@@ -125,13 +121,11 @@ _limits = [0.0, 1.0, 0.0, 90.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(23.217636, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Resource" id="Resource_onvmd"]
-script = ExtResource("7_1rqa4")
-assets = Array[ExtResource("8_xm42s")]([ExtResource("9_tdg64")])
+[sub_resource type="FoliageCollectionBasic" id="Resource_onvmd"]
+assets = Array[FoliageAsset]([ExtResource("9_tdg64")])
 weights = PackedFloat32Array(1)
 textures = PackedInt32Array(0)
 slope_density_curve = SubResource("Curve_1rqa4")
-metadata/_custom_type_script = "uid://dfxr8qtg4c8lw"
 
 [node name="Demo" type="Node3D" unique_id=873619184]
 
@@ -149,27 +143,21 @@ assets = SubResource("Terrain3DAssets_onu7k")
 top_level = true
 metadata/_edit_lock_ = true
 
-[node name="Foliage" type="Node" parent="." unique_id=179098947 node_paths=PackedStringArray("terrain")]
-script = ExtResource("5_onvmd")
+[node name="Foliage" type="FoliagePartition" parent="." unique_id=179098947 node_paths=PackedStringArray("terrain")]
 terrain = NodePath("../Terrain")
-metadata/_custom_type_script = "uid://wwjjx2yy85x4"
 
-[node name="Grass" type="Node" parent="Foliage" unique_id=896278801]
-script = ExtResource("6_oeqrt")
-collections = Array[ExtResource("7_1rqa4")]([SubResource("Resource_onvmd")])
+[node name="Grass" type="FoliageLayerBasic" parent="Foliage" unique_id=896278801]
+collections = Array[FoliageCollectionBasic]([SubResource("Resource_onvmd")])
 lattice_spacing = 2.0
 randomness = 0.4
 keep = 0.9
 hide_lod = 2
-metadata/_custom_type_script = "uid://jwbpqi7rqtj6"
 
-[node name="Trees" type="Node" parent="Foliage" unique_id=577720804]
-script = ExtResource("6_oeqrt")
-collections = Array[ExtResource("7_1rqa4")]([ExtResource("10_xm42s")])
+[node name="Trees" type="FoliageLayerBasic" parent="Foliage" unique_id=577720804]
+collections = Array[FoliageCollectionBasic]([ExtResource("10_xm42s")])
 lattice_spacing = 6.0
 randomness = 0.6
 keep = 0.1
-metadata/_custom_type_script = "uid://jwbpqi7rqtj6"
 
 [node name="Observer" parent="." unique_id=1874162946 instance=ExtResource("5_u10mr")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -367.08313, 158.77776, -375.85297)

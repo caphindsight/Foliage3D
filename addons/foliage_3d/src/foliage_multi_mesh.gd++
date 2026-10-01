@@ -1,0 +1,27 @@
+/// Renders all instances of one mesh in a chunk.
+/// If [member scene] is set, it turns the instances into instances of the scene, one per frame,
+/// which makes nearby foliage interactive.
+@profile("foliage")
+class_name FoliageMultiMesh
+extends MultiMeshInstance3D
+
+var scene: PackedScene
+
+@override
+func _process(delta: float) -> void {
+  Ref<MultiMesh> mm = get_multimesh();
+  int64_t count = mm.is_valid() ? mm->get_visible_instance_count() : 0;
+  if (count < 0) {
+    count = mm->get_instance_count();  // -1 means all instances are visible.
+  }
+  if (scene.is_null() || count == 0) {
+    set_process(false);
+    return;
+  }
+  mm->set_visible_instance_count(--count);
+  Node *instance = scene->instantiate();
+  if (Node3D *instance3d = instance as Node3D *) {
+    instance3d->set_transform(mm->get_instance_transform(count));
+  }
+  add_child(instance);
+}

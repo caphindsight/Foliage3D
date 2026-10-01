@@ -1,0 +1,132 @@
+/// A collection of placement decisions for a single foliage chunk.
+/// This is the data structure operated on by [FoliageLayer].
+@profile("foliage")
+class_name FoliagePlacement
+
+var terrain_data: Terrain3DData
+var assets: Array[FoliageAsset]
+var transforms: Array[Transform3D]
+var normals: PackedVector3Array
+var base_texture_ids: PackedInt32Array
+var overlay_texture_ids: PackedInt32Array
+var texture_blend_amounts: PackedFloat32Array
+
+decl {
+  Ref<FoliageRandom> random_pitch_ = FoliageRandom::create(-3030054608389);
+  Ref<FoliageRandom> random_pitch_axis_ = FoliageRandom::create(5851782439795);
+  Ref<FoliageRandom> random_yaw_ = FoliageRandom::create(5558960081466);
+  Ref<FoliageRandom> random_scale_ = FoliageRandom::create(8422615989223);
+}
+
+/// Count of the available points on the grid.
+@const
+func size() -> int {
+  return assets.size();
+}
+
+/// Resizes the available points on the grid.
+/// [b]Warning:[/b] this is an advanced feature, it allows scripts to generate custom grids.
+func resize(new_size: int, preserve: bool = false) -> void {
+  if (!preserve) {
+    resize(0, true);
+  }
+  assets.resize(new_size);
+  transforms.resize(new_size);
+  normals.resize(new_size);
+  base_texture_ids.resize(new_size);
+  overlay_texture_ids.resize(new_size);
+  texture_blend_amounts.resize(new_size);
+}
+
+/// Get the global transform of the i-th available grid point.
+@const
+func get_transform(i: int) -> Transform3D {
+  return transforms[i] as Transform3D;
+}
+
+/// Set the global transform of the i-th available grid point.
+func set_transform(i: int, transform: Transform3D) -> void {
+  transforms[i] = transform;
+}
+
+/// Gets the height of the i-th available grid point.
+@const
+func get_height(i: int) -> float {
+  return get_transform(i).origin.y;
+}
+
+/// Gets the terrain normal vector of the i-th available grid point.
+@const
+func get_normal(i: int) -> Vector3 {
+  return normals[i];
+}
+
+/// Gets the terrain slope of the i-th available grid point, in radians.
+@const
+func get_slope(i: int) -> float {
+  return Math::acos(Math::abs(normals[i].y));
+}
+
+/// Get the asset placed at the i-th available grid point.
+/// If there isn't an asset currently placed, returns [code]null[/code].
+@const
+func get_asset(i: int) -> FoliageAsset {
+  return assets[i] as Ref<FoliageAsset>;
+}
+
+/// Set the asset placed at the i-th available grid point.
+/// To remove an asset, set it to [code]null[/code].
+func set_asset(i: int, asset: FoliageAsset) -> void {
+  assets[i] = asset;
+}
+
+/// Set the asset placed at the i-th available grid point, and randomize its transform
+/// according to the parameters set on the [FoliageAsset] resource.
+func place_asset(i: int, asset: FoliageAsset) -> void {
+  assets[i] = asset;
+  if (asset.is_null()) {
+    return;
+  }
+  const Vector3 up(0, 1, 0);
+  Transform3D transform = get_transform(i);
+  Vector2 position(transform.origin.x, transform.origin.z);
+
+  Vector3 pitch_axis(1, 0, 0);
+  if (asset->randomize_pitch) {
+    random_pitch_axis_->seed_with_vec2(position);
+    pitch_axis = pitch_axis.rotated(up, random_pitch_axis_->randf() * Math::TAU);
+  }
+  random_pitch_->seed_with_vec2(position);
+  transform = transform.rotated_local(pitch_axis, Math::lerp(asset->pitch_min, asset->pitch_max, random_pitch_->randf() as double));
+
+  if (asset->randomize_yaw) {
+    random_yaw_->seed_with_vec2(position);
+    transform = transform.rotated_local(up, random_yaw_->randf() * Math::TAU);
+  }
+
+  Quaternion normal_align = Quaternion().slerp(Quaternion(up, normals[i]), asset->align_to_normal);
+  transform.basis = Basis(normal_align) * transform.basis;
+
+  random_scale_->seed_with_vec2(position);
+  real_t scale = Math::lerp(asset->scale_min, asset->scale_max, random_scale_->randf() as double);
+  transforms[i] = transform.scaled_local(Vector3(scale, scale, scale));
+}
+
+/// Returns the blend amount of terrain texture [param texture_id] sampled at point i.
+/// [b]Warning:[/b] sampling happens before [method FoliageLayer._place] runs.
+/// If you modify point transforms inside [method FoliageLayer._place], you will have to resample textures.
+@const
+func sample_texture(i: int, texture_id: int) -> float {
+  double blend = texture_blend_amounts[i];
+  return (base_texture_ids[i] == texture_id ? 1.0 - blend : 0.0) +
+      (overlay_texture_ids[i] == texture_id ? blend : 0.0);
+}
+
+func add_point(transform: Transform3D, normal: Vector3, base_texture_id: int, overlay_texture_id: int, texture_blend_amount: float) -> void {
+  assets.push_back(Variant());
+  transforms.push_back(transform);
+  normals.push_back(normal);
+  base_texture_ids.push_back(base_texture_id);
+  overlay_texture_ids.push_back(overlay_texture_id);
+  texture_blend_amounts.push_back(texture_blend_amount);
+}

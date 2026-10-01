@@ -1,0 +1,16 @@
+// Terrain3D is a separate GDExtension, so we only know it at runtime: every call goes by name.
+
+extern Terrain3D {
+  extends Node3D
+  var data: Terrain3DData
+}
+
+extern Terrain3DData {
+  extends Object
+  @const func get_height(position: Vector3) -> float
+  @const func get_normal(position: Vector3) -> Vector3
+  @const func get_control_hole(position: Vector3) -> bool
+  @const func get_control_base_id(position: Vector3) -> int
+  @const func get_control_overlay_id(position: Vector3) -> int
+  @const func get_control_blend(position: Vector3) -> float
+}

@@ -9,3 +9,11 @@
 **.tmp
 **/*~
 **/~*
+
+# GD++ project-level ignores
+/.gd++proj/**
+**.swo
+**.swp
+**.tmp
+**/*~
+**/~*

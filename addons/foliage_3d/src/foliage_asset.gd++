@@ -1,0 +1,54 @@
+/// Represents an asset that can be placed on chunks with various LODs.
+@icon("pkg://icons/foliage_asset.svg")
+@profile("foliage")
+class_name FoliageAsset
+extends Resource
+
+enum ShadowCastingSetting { extends GeometryInstance3D.ShadowCastingSetting }
+
+/// A mesh for each level of detail this asset supports.
+@export_group("Visuals")
+@export var lods: Array[Mesh]
+
+/// Maps chunk LODs (indexes) to asset LODs (indexes in the [member lods] array).
+/// For example, suppose it is set to [code][-1, 0, 1, 2, 2][/code]. Then:
+/// * LOD-0 chunks will use instanced [member scene].
+/// * LOD-1 chunks will render instances of the [code]lods[0][/code] mesh.
+/// * LOD-2 chunks will render instances of the [code]lods[1][/code] mesh.
+/// * LOD-3 and LOD-4 chunks will render instances of the [code]lods[2][/code] mesh.
+/// * LOD-5 and further chunks will not render this asset at all.
+@export var lod_map: PackedInt32Array
+
+/// Whether the meshes should cast shadows.
+/// This doesn't apply to the interactive scene.
+@export var cast_shadow: ShadowCastingSetting = ON
+
+/// If set, defines a special asset LOD-(-1).
+/// Such assets are represented by instances of this scene, rather than with GPU instancing.
+/// This makes nearby foliage interactive.
+@export var scene: PackedScene
+
+/// Picks a random yaw for each asset.
+@export_group("Transform")
+@export var randomize_yaw: bool = true
+
+/// Picks a random pitch axis for each asset.
+/// If this is turned off, pitch will always be applied around the X axis.
+@export var randomize_pitch: bool = true
+
+/// Pitch will be picked randomly between [member pitch_min] and [member pitch_max].
+@export_range(0, 180, 0.1, "radians_as_degrees") var pitch_min: float = 0
+
+/// Pitch will be picked randomly between [member pitch_min] and [member pitch_max].
+@export_range(0, 180, 0.1, "radians_as_degrees") var pitch_max: float = 0
+
+/// Uniform scale will be picked randomly between [member scale_min] and [member scale_max].
+@export var scale_min: float = 1
+
+/// Uniform scale will be picked randomly between [member scale_min] and [member scale_max].
+@export var scale_max: float = 1
+
+/// Controls rotation towards the terrain normal.
+/// When this is set to 0, assets are placed facing up.
+/// When this is set to 1, assets are placed facing the terrain normal.
+@export var align_to_normal: float = 0

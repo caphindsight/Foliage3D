@@ -1,0 +1,160 @@
+/// Represents a single layer of foliage covering the entire world.
+/// The layer uses a coordinate-aligned lattice with a fixed value of lattice spacing.
+/// The lattice nodes are randomized, and can be further adjusted by overriding [method _place].
+@icon("pkg://icons/foliage_layer.svg")
+@profile("foliage")
+class_name FoliageLayer
+extends Node
+
+/// Lattice spacing for this foliage layer.
+/// This should be picked with the size of foliage assets in mind.
+/// For example, for trees, a good value is around 16 (the default).
+/// For grass / flowers, this can be tuned down to about 2.
+@export var lattice_spacing: float = 16
+
+/// Lattice node positions are randomized.
+/// Each node ends up within a square with linear size 2 * lattice_spacing * randomness,
+/// centered around its original position.
+/// Set this to 0 to place foliage in a rectangular lattice (useful for e.g. crops, vineyards, etc.).
+@export var randomness: float = 0.8
+
+/// Each lattice node will be kept with this probability.
+/// Useful to make foliage placement look more natural.
+@export var keep: float = 0.5
+
+/// If set to a non-negative value, quad tree LODs that are equal or greater to this value
+/// will not be instantiated at all. Necessary to avoid generating expensive chunks.
+/// For example, you will want to set this to something like 3 for grass, while keeping it
+/// high (around 7-8) for trees.
+@export var hide_lod: int = 7
+
+/// Set by [FoliagePartition] from its terrain.
+var terrain_data: Terrain3DData
+
+/// Override this function in a script or a subclass to place assets.
+/// [b]Warning:[/b] it runs on a worker thread!
+@virtual
+func _place(placement: FoliagePlacement) -> void {}
+
+/// Whether chunks of this LOD have any foliage of this layer.
+@const
+func shows_lod(lod: int) -> bool {
+  return hide_lod < 0 || lod < hide_lod;
+}
+
+/// Builds the hidden chunk node for [param rect], on a worker thread.
+/// The node holds a [FoliageMultiMesh] per mesh, and is not added to the tree.
+/// Returns [code]null[/code] if the task was cancelled.
+@onthread
+func build_chunk(rect: Rect2, lod: int) -> Node3D {
+  Ref<FoliagePlacement> placement = prepare_placement(rect);
+  _place(placement);
+
+  // Group the instances by mesh: each mesh becomes one multimesh.
+  struct Batch {
+    Ref<Mesh> mesh;
+    Ref<FoliageAsset> asset;
+    bool use_scene = false;
+    LocalVector<Transform3D> transforms;
+  };
+  HashMap<const Mesh *, Batch> batches;
+  Vector3 origin(rect.get_center().x, 0, rect.get_center().y);
+  for (int64_t i = 0; i < placement->size(); i++) {
+    Ref<FoliageAsset> asset = placement->get_asset(i);
+    if (asset.is_null() || lod >= asset->lod_map.size()) {
+      continue;
+    }
+    int64_t asset_lod = asset->lod_map[lod];
+    bool use_scene = asset_lod < 0;  // LOD-(-1) is the first mesh, which turns into scenes up close.
+    asset_lod = MAX(asset_lod, 0);
+    if (asset_lod >= asset->lods.size()) {
+      continue;
+    }
+    Ref<Mesh> mesh = asset->lods[asset_lod] as Ref<Mesh>;
+    if (mesh.is_null()) {
+      continue;
+    }
+    if (!batches.has(mesh.ptr())) {
+      batches[mesh.ptr()] = Batch{mesh, asset, use_scene};
+    }
+    batches[mesh.ptr()].transforms.push_back(placement->get_transform(i).translated(-origin));
+  }
+
+  if (is_cancelled) {
+    return nullptr;
+  }
+  Node3D *chunk = memnew(Node3D);
+  chunk->hide();
+  chunk->set_position(origin);
+  for (KeyValue<const Mesh *, Batch> &entry : batches) {
+    Batch &batch = entry.value;
+    Ref<MultiMesh> multimesh;
+    multimesh.instantiate();
+    multimesh->set_transform_format(MultiMesh::TRANSFORM_3D);
+    multimesh->set_mesh(batch.mesh);
+    multimesh->set_instance_count(batch.transforms.size());
+    for (uint32_t i = 0; i < batch.transforms.size(); i++) {
+      multimesh->set_instance_transform(i, batch.transforms[i]);
+    }
+    FoliageMultiMesh *node = memnew(FoliageMultiMesh);
+    node->set_multimesh(multimesh);
+    node->set_cast_shadows_setting(batch.asset->cast_shadow as GeometryInstance3D::ShadowCastingSetting);
+    if (batch.use_scene) {
+      node->scene = batch.asset->scene;
+    }
+    chunk->add_child(node);
+  }
+  return chunk;
+}
+
+/// Samples the randomized lattice nodes inside [param rect] on the terrain.
+/// [b]Warning:[/b] it runs on a worker thread!
+func prepare_placement(rect: Rect2) -> FoliagePlacement {
+  Ref<FoliagePlacement> placement;
+  placement.instantiate();
+  placement->terrain_data = terrain_data;
+
+  // Jitter can move nodes by up to one spacing, so look a bit beyond the rect.
+  double margin = lattice_spacing * 1.5;
+  int64_t i1 = Math::floor((rect.position.x - margin) / lattice_spacing) as int64_t;
+  int64_t i2 = Math::ceil((rect.get_end().x + margin) / lattice_spacing) as int64_t;
+  int64_t j1 = Math::floor((rect.position.y - margin) / lattice_spacing) as int64_t;
+  int64_t j2 = Math::ceil((rect.get_end().y + margin) / lattice_spacing) as int64_t;
+
+  Ref<FoliageRandom> rand_jitter_x = FoliageRandom::create(571658977732);
+  Ref<FoliageRandom> rand_jitter_y = FoliageRandom::create(4319594216159);
+  Ref<FoliageRandom> rand_keep = FoliageRandom::create(2812107841962);
+  for (int64_t i = i1; i < i2 && !is_cancelled; i++) {
+    for (int64_t j = j1; j < j2; j++) {
+      Vector2 position(lattice_spacing * i, lattice_spacing * j);
+      rand_jitter_x->seed_with_vec2(position);
+      rand_jitter_y->seed_with_vec2(position);
+      rand_keep->seed_with_vec2(position);
+      Vector2 jitter = Vector2(rand_jitter_x->randf(), rand_jitter_y->randf()) * 2 - Vector2(1, 1);
+      position += jitter * lattice_spacing * randomness;
+      if (rand_keep->randf() >= keep || !rect.has_point(position)) {
+        continue;
+      }
+
+      Vector3 position3(position.x, 0, position.y);
+      Vector3 normal(0, 1, 0);
+      int64_t base_texture_id = 0;
+      int64_t overlay_texture_id = -1;
+      double texture_blend_amount = 0;
+      if (terrain_data) {
+        if (terrain_data->get_control_hole(position3)) {
+          continue;
+        }
+        double height = terrain_data->get_height(position3);
+        position3.y = Math::is_finite(height) ? height : 0.0;
+        normal = terrain_data->get_normal(position3);
+        normal = normal.is_finite() && !normal.is_zero_approx() ? normal.normalized() : Vector3(0, 1, 0);
+        base_texture_id = terrain_data->get_control_base_id(position3);
+        overlay_texture_id = terrain_data->get_control_overlay_id(position3);
+        texture_blend_amount = terrain_data->get_control_blend(position3);
+      }
+      placement->add_point(Transform3D(Basis(), position3), normal, base_texture_id, overlay_texture_id, texture_blend_amount);
+    }
+  }
+  return placement;
+}
