@@ -113,3 +113,12 @@ func _place(placement: FoliagePlacement) -> void:
 ```
 
 Note that `_place` runs on a worker thread, so it must not touch the scene tree.
+
+## License
+
+Only the code under [`addons/foliage_3d`](addons/foliage_3d) is licensed under the [MIT license](LICENSE). The rest of the repository is not covered by it:
+
+- [`addons/terrain_3d`](addons/terrain_3d) is [Terrain3D](https://github.com/TokisanGames/Terrain3D), a separate addon with its own licensing terms. See [`addons/terrain_3d/LICENSE.txt`](addons/terrain_3d/LICENSE.txt).
+- Everything else, including the demo scene, models, textures, materials and screenshots, is assets that are **not licensed and must not be redistributed**.
+
+The tree assets in the demo were made with [Tree It](https://store.steampowered.com/app/2386460/Tree_It/).
