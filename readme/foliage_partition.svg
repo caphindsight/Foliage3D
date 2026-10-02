@@ -49,7 +49,7 @@
   <text x="16" y="930"><tspan fill="#8b949e">/// await foliage_partition.foliage_is_ready</tspan></text>
   <text x="16" y="950"><tspan fill="#8b949e">/// hide_loading_screen()</tspan></text>
   <text x="16" y="970"><tspan fill="#8b949e">/// [/codeblock]</tspan></text>
-  <text x="16" y="990"><tspan fill="#e3b341">signal</tspan><tspan fill="#e6edf3"> foliage_is_ready</tspan></text>
+  <text x="16" y="990"><tspan fill="#e3b341">signal</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">foliage_is_ready</tspan></text>
   <text x="16" y="1010"></text>
   <text x="16" y="1030"><tspan fill="#79c0ff">@global</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">decl</tspan><tspan fill="#e6edf3"> {</tspan></text>
   <text x="16" y="1050"><tspan fill="#e6edf3">  </tspan><tspan fill="#79c0ff">#include</tspan><tspan fill="#e6edf3"> &lt;memory&gt;</tspan></text>
@@ -117,7 +117,7 @@
   <text x="16" y="2290"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *&gt; &amp;task : orphans_) {</tspan></text>
   <text x="16" y="2310"><tspan fill="#e6edf3">      task.</tspan><tspan fill="#56d4dd">wait</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="2330"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *node = </tspan><tspan fill="#e3b341">claim</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
-  <text x="16" y="2350"><tspan fill="#e6edf3">        </tspan><tspan fill="#56d4dd">memdelete</tspan><tspan fill="#e6edf3">(node);</tspan></text>
+  <text x="16" y="2350"><tspan fill="#e6edf3">        </tspan><tspan fill="#e3b341">destroy</tspan><tspan fill="#e6edf3"> node;</tspan></text>
   <text x="16" y="2370"><tspan fill="#e6edf3">      }</tspan></text>
   <text x="16" y="2390"><tspan fill="#e6edf3">    }</tspan></text>
   <text x="16" y="2410"><tspan fill="#e6edf3">    orphans_.</tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
@@ -235,7 +235,7 @@
   <text x="16" y="4650"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">false</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="4670"><tspan fill="#e6edf3">    }</tspan></text>
   <text x="16" y="4690"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *node = </tspan><tspan fill="#e3b341">claim</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
-  <text x="16" y="4710"><tspan fill="#e6edf3">      </tspan><tspan fill="#56d4dd">memdelete</tspan><tspan fill="#e6edf3">(node);</tspan></text>
+  <text x="16" y="4710"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">destroy</tspan><tspan fill="#e6edf3"> node;</tspan></text>
   <text x="16" y="4730"><tspan fill="#e6edf3">    }</tspan></text>
   <text x="16" y="4750"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">true</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="4770"><tspan fill="#e6edf3">  });</tspan></text>

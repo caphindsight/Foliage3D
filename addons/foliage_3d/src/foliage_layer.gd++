@@ -83,7 +83,7 @@ func build_chunk(rect: Rect2, lod: int) -> Node3D {
   if (is_cancelled) {
     return nullptr;
   }
-  Node3D *chunk = memnew(Node3D);
+  Node3D *chunk = create Node3D;
   chunk->hide();
   chunk->set_position(origin);
   for (KeyValue<const Mesh *, Batch> &entry : batches) {
@@ -96,7 +96,7 @@ func build_chunk(rect: Rect2, lod: int) -> Node3D {
     for (uint32_t i = 0; i < batch.transforms.size(); i++) {
       multimesh->set_instance_transform(i, batch.transforms[i]);
     }
-    FoliageMultiMesh *node = memnew(FoliageMultiMesh);
+    FoliageMultiMesh *node = create FoliageMultiMesh;
     node->set_multimesh(multimesh);
     node->set_cast_shadows_setting(batch.asset->cast_shadow as GeometryInstance3D::ShadowCastingSetting);
     if (batch.use_scene) {
