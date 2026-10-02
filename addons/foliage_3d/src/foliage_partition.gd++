@@ -96,7 +96,7 @@ decl {
     }
     for (Chunk &chunk : quad.chunks) {
       if (chunk.node) {
-        chunk.node->queue_free();
+        queue_destroy chunk.node;
       }
       if (chunk.task) {
         cancel chunk.task;

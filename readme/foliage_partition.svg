@@ -99,7 +99,7 @@
   <text x="16" y="1930"><tspan fill="#e6edf3">    }</tspan></text>
   <text x="16" y="1950"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Chunk</tspan><tspan fill="#e6edf3"> &amp;chunk : quad.chunks) {</tspan></text>
   <text x="16" y="1970"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (chunk.node) {</tspan></text>
-  <text x="16" y="1990"><tspan fill="#e6edf3">        chunk.node-&gt;</tspan><tspan fill="#56d4dd">queue_free</tspan><tspan fill="#e6edf3">();</tspan></text>
+  <text x="16" y="1990"><tspan fill="#e6edf3">        </tspan><tspan fill="#e3b341">queue_destroy</tspan><tspan fill="#e6edf3"> chunk.node;</tspan></text>
   <text x="16" y="2010"><tspan fill="#e6edf3">      }</tspan></text>
   <text x="16" y="2030"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (chunk.task) {</tspan></text>
   <text x="16" y="2050"><tspan fill="#e6edf3">        </tspan><tspan fill="#e3b341">cancel</tspan><tspan fill="#e6edf3"> chunk.task;</tspan></text>
