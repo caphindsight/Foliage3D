@@ -7,7 +7,6 @@ extends MultiMeshInstance3D
 
 var scene: PackedScene
 
-@override
 func _process(delta: float) -> void {
   Ref<MultiMesh> mm = get_multimesh();
   int64_t count = mm.is_valid() ? mm->get_visible_instance_count() : 0;

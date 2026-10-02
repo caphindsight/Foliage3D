@@ -210,7 +210,6 @@ notif(PREDELETE) {
   clear();
 }
 
-@override
 func _ready() -> void {
   clear();
   layers_.clear();
@@ -227,7 +226,6 @@ func _ready() -> void {
   root_ = make_quad(Rect2(-root_size / 2, -root_size / 2, root_size, root_size), root_lod);
 }
 
-@override
 func _process(delta: float) -> void {
   std::erase_if(orphans_, [](Async<Node3D *> &task) {
     if (!is_done task) {

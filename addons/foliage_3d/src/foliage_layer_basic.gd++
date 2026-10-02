@@ -9,7 +9,7 @@ extends FoliageLayer
 /// and then pick a [FoliageAsset] inside that collection based on the probabilities of assets within the collection.
 @export var collections: Array[FoliageCollectionBasic]
 
-@final @override
+@override("final")
 func _place(placement: FoliagePlacement) -> void {
   LocalVector<Ref<FoliageCollectionBasic>> cols;
   for (int64_t j = 0; j < collections.size(); j++) {
