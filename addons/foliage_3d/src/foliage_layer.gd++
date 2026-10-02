@@ -33,7 +33,7 @@ var terrain_data: Terrain3DData
 
 /// Override this function in a script or a subclass to place assets.
 /// [b]Warning:[/b] it runs on a worker thread!
-@virtual
+@virtual("private")
 func _place(placement: FoliagePlacement) -> void {}
 
 /// Whether chunks of this LOD have any foliage of this layer.

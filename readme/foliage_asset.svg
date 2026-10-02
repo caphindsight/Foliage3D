@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="805" height="1109" viewBox="0 0 805 1109">
+  <rect width="100%" height="100%" rx="8" fill="#0d1117"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">
+  <text x="16" y="30"><tspan fill="#8b949e">/// Represents an asset that can be placed on chunks with various LODs.</tspan></text>
+  <text x="16" y="50"><tspan fill="#79c0ff">@icon</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">"pkg://icons/foliage_asset.svg"</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="16" y="70"><tspan fill="#79c0ff">@profile</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">"foliage"</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="16" y="90"><tspan fill="#e3b341">class_name</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">FoliageAsset</tspan></text>
+  <text x="16" y="110"><tspan fill="#e3b341">extends</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">Resource</tspan></text>
+  <text x="16" y="130"></text>
+  <text x="16" y="150"><tspan fill="#e3b341">enum</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">ShadowCastingSetting</tspan><tspan fill="#e6edf3"> { </tspan><tspan fill="#e3b341">extends</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">GeometryInstance3D</tspan><tspan fill="#e6edf3">.</tspan><tspan fill="#7ee787">ShadowCastingSetting</tspan><tspan fill="#e6edf3"> }</tspan></text>
+  <text x="16" y="170"></text>
+  <text x="16" y="190"><tspan fill="#8b949e">/// A mesh for each level of detail this asset supports.</tspan></text>
+  <text x="16" y="210"><tspan fill="#79c0ff">@export_group</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">"Visuals"</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="16" y="230"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> lods: </tspan><tspan fill="#7ee787">Array</tspan><tspan fill="#e6edf3">[</tspan><tspan fill="#7ee787">Mesh</tspan><tspan fill="#e6edf3">]</tspan></text>
+  <text x="16" y="250"></text>
+  <text x="16" y="270"><tspan fill="#8b949e">/// Maps chunk LODs (indexes) to asset LODs (indexes in the [member lods] array).</tspan></text>
+  <text x="16" y="290"><tspan fill="#8b949e">/// For example, suppose it is set to [code][-1, 0, 1, 2, 2][/code]. Then:</tspan></text>
+  <text x="16" y="310"><tspan fill="#8b949e">/// * LOD-0 chunks will use instanced [member scene].</tspan></text>
+  <text x="16" y="330"><tspan fill="#8b949e">/// * LOD-1 chunks will render instances of the [code]lods[0][/code] mesh.</tspan></text>
+  <text x="16" y="350"><tspan fill="#8b949e">/// * LOD-2 chunks will render instances of the [code]lods[1][/code] mesh.</tspan></text>
+  <text x="16" y="370"><tspan fill="#8b949e">/// * LOD-3 and LOD-4 chunks will render instances of the [code]lods[2][/code] mesh.</tspan></text>
+  <text x="16" y="390"><tspan fill="#8b949e">/// * LOD-5 and further chunks will not render this asset at all.</tspan></text>
+  <text x="16" y="410"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> lod_map: </tspan><tspan fill="#7ee787">PackedInt32Array</tspan></text>
+  <text x="16" y="430"></text>
+  <text x="16" y="450"><tspan fill="#8b949e">/// Whether the meshes should cast shadows.</tspan></text>
+  <text x="16" y="470"><tspan fill="#8b949e">/// This doesn't apply to the interactive scene.</tspan></text>
+  <text x="16" y="490"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> cast_shadow: </tspan><tspan fill="#7ee787">ShadowCastingSetting</tspan><tspan fill="#e6edf3"> = ON</tspan></text>
+  <text x="16" y="510"></text>
+  <text x="16" y="530"><tspan fill="#8b949e">/// If set, defines a special asset LOD-(-1).</tspan></text>
+  <text x="16" y="550"><tspan fill="#8b949e">/// Such assets are represented by instances of this scene, rather than with GPU instancing.</tspan></text>
+  <text x="16" y="570"><tspan fill="#8b949e">/// This makes nearby foliage interactive.</tspan></text>
+  <text x="16" y="590"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> scene: </tspan><tspan fill="#7ee787">PackedScene</tspan></text>
+  <text x="16" y="610"></text>
+  <text x="16" y="630"><tspan fill="#8b949e">/// Picks a random yaw for each asset.</tspan></text>
+  <text x="16" y="650"><tspan fill="#79c0ff">@export_group</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">"Transform"</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="16" y="670"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> randomize_yaw: </tspan><tspan fill="#7ee787">bool</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#e3b341">true</tspan></text>
+  <text x="16" y="690"></text>
+  <text x="16" y="710"><tspan fill="#8b949e">/// Picks a random pitch axis for each asset.</tspan></text>
+  <text x="16" y="730"><tspan fill="#8b949e">/// If this is turned off, pitch will always be applied around the X axis.</tspan></text>
+  <text x="16" y="750"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> randomize_pitch: </tspan><tspan fill="#7ee787">bool</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#e3b341">true</tspan></text>
+  <text x="16" y="770"></text>
+  <text x="16" y="790"><tspan fill="#8b949e">/// Pitch will be picked randomly between [member pitch_min] and [member pitch_max].</tspan></text>
+  <text x="16" y="810"><tspan fill="#79c0ff">@export_range</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">, </tspan><tspan fill="#d2a8ff">180</tspan><tspan fill="#e6edf3">, </tspan><tspan fill="#d2a8ff">0.1</tspan><tspan fill="#e6edf3">, </tspan><tspan fill="#d2a8ff">"radians_as_degrees"</tspan><tspan fill="#e6edf3">) </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> pitch_min: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">0</tspan></text>
+  <text x="16" y="830"></text>
+  <text x="16" y="850"><tspan fill="#8b949e">/// Pitch will be picked randomly between [member pitch_min] and [member pitch_max].</tspan></text>
+  <text x="16" y="870"><tspan fill="#79c0ff">@export_range</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">, </tspan><tspan fill="#d2a8ff">180</tspan><tspan fill="#e6edf3">, </tspan><tspan fill="#d2a8ff">0.1</tspan><tspan fill="#e6edf3">, </tspan><tspan fill="#d2a8ff">"radians_as_degrees"</tspan><tspan fill="#e6edf3">) </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> pitch_max: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">0</tspan></text>
+  <text x="16" y="890"></text>
+  <text x="16" y="910"><tspan fill="#8b949e">/// Uniform scale will be picked randomly between [member scale_min] and [member scale_max].</tspan></text>
+  <text x="16" y="930"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> scale_min: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">1</tspan></text>
+  <text x="16" y="950"></text>
+  <text x="16" y="970"><tspan fill="#8b949e">/// Uniform scale will be picked randomly between [member scale_min] and [member scale_max].</tspan></text>
+  <text x="16" y="990"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> scale_max: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">1</tspan></text>
+  <text x="16" y="1010"></text>
+  <text x="16" y="1030"><tspan fill="#8b949e">/// Controls rotation towards the terrain normal.</tspan></text>
+  <text x="16" y="1050"><tspan fill="#8b949e">/// When this is set to 0, assets are placed facing up.</tspan></text>
+  <text x="16" y="1070"><tspan fill="#8b949e">/// When this is set to 1, assets are placed facing the terrain normal.</tspan></text>
+  <text x="16" y="1090"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> align_to_normal: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">0</tspan></text>
+  </g>
+</svg>

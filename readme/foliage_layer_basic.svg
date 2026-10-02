@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1015" height="969" viewBox="0 0 1015 969">
+  <rect width="100%" height="100%" rx="8" fill="#0d1117"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">
+  <text x="16" y="30"><tspan fill="#8b949e">/// This should be enough for most basic use cases, like placing some trees and grass.</tspan></text>
+  <text x="16" y="50"><tspan fill="#8b949e">/// For more advanced use cases, implement your own subclass of [FoliageLayer].</tspan></text>
+  <text x="16" y="70"><tspan fill="#79c0ff">@profile</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">"foliage"</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="16" y="90"><tspan fill="#e3b341">class_name</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">FoliageLayerBasic</tspan></text>
+  <text x="16" y="110"><tspan fill="#e3b341">extends</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">FoliageLayer</tspan></text>
+  <text x="16" y="130"></text>
+  <text x="16" y="150"><tspan fill="#8b949e">/// Use these collections.</tspan></text>
+  <text x="16" y="170"><tspan fill="#8b949e">/// [FoliageLayerBasic] will first pick a collection based on individual probability densities for each collection,</tspan></text>
+  <text x="16" y="190"><tspan fill="#8b949e">/// and then pick a [FoliageAsset] inside that collection based on the probabilities of assets within the collection.</tspan></text>
+  <text x="16" y="210"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> collections: </tspan><tspan fill="#7ee787">Array</tspan><tspan fill="#e6edf3">[</tspan><tspan fill="#7ee787">FoliageCollectionBasic</tspan><tspan fill="#e6edf3">]</tspan></text>
+  <text x="16" y="230"></text>
+  <text x="16" y="250"><tspan fill="#79c0ff">@override</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">"final"</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="16" y="270"><tspan fill="#e3b341">func</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">_place</tspan><tspan fill="#e6edf3">(placement: </tspan><tspan fill="#7ee787">FoliagePlacement</tspan><tspan fill="#e6edf3">) -&gt; </tspan><tspan fill="#7ee787">void</tspan><tspan fill="#e6edf3"> {</tspan></text>
+  <text x="16" y="290"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">LocalVector</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageCollectionBasic</tspan><tspan fill="#e6edf3">&gt;&gt; cols;</tspan></text>
+  <text x="16" y="310"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">int64_t</tspan><tspan fill="#e6edf3"> j = </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">; j &lt; collections.</tspan><tspan fill="#56d4dd">size</tspan><tspan fill="#e6edf3">(); j++) {</tspan></text>
+  <text x="16" y="330"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageCollectionBasic</tspan><tspan fill="#e6edf3">&gt; col = collections[j] </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageCollectionBasic</tspan><tspan fill="#e6edf3">&gt;; col.</tspan><tspan fill="#56d4dd">is_valid</tspan><tspan fill="#e6edf3">()) {</tspan></text>
+  <text x="16" y="350"><tspan fill="#e6edf3">      cols.</tspan><tspan fill="#56d4dd">push_back</tspan><tspan fill="#e6edf3">(col);</tspan></text>
+  <text x="16" y="370"><tspan fill="#e6edf3">    }</tspan></text>
+  <text x="16" y="390"><tspan fill="#e6edf3">  }</tspan></text>
+  <text x="16" y="410"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">LocalVector</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">double</tspan><tspan fill="#e6edf3">&gt; probabilities;</tspan></text>
+  <text x="16" y="430"><tspan fill="#e6edf3">  probabilities.</tspan><tspan fill="#56d4dd">resize</tspan><tspan fill="#e6edf3">(cols.</tspan><tspan fill="#56d4dd">size</tspan><tspan fill="#e6edf3">());</tspan></text>
+  <text x="16" y="450"></text>
+  <text x="16" y="470"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageRandom</tspan><tspan fill="#e6edf3">&gt; rng = </tspan><tspan fill="#7ee787">FoliageRandom</tspan><tspan fill="#e6edf3">::</tspan><tspan fill="#56d4dd">create</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#d2a8ff">772364723</tspan><tspan fill="#e6edf3">);</tspan></text>
+  <text x="16" y="490"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">int64_t</tspan><tspan fill="#e6edf3"> i = </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">; i &lt; placement-&gt;</tspan><tspan fill="#56d4dd">size</tspan><tspan fill="#e6edf3">(); i++) {</tspan></text>
+  <text x="16" y="510"><tspan fill="#e6edf3">    </tspan><tspan fill="#7ee787">double</tspan><tspan fill="#e6edf3"> total_probability = </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">;</tspan></text>
+  <text x="16" y="530"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">uint32_t</tspan><tspan fill="#e6edf3"> j = </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">; j &lt; cols.</tspan><tspan fill="#56d4dd">size</tspan><tspan fill="#e6edf3">(); j++) {</tspan></text>
+  <text x="16" y="550"><tspan fill="#e6edf3">      probabilities[j] = cols[j]-&gt;</tspan><tspan fill="#56d4dd">get_collection_probability</tspan><tspan fill="#e6edf3">(placement, i);</tspan></text>
+  <text x="16" y="570"><tspan fill="#e6edf3">      total_probability += probabilities[j];</tspan></text>
+  <text x="16" y="590"><tspan fill="#e6edf3">    }</tspan></text>
+  <text x="16" y="610"><tspan fill="#e6edf3">    </tspan><tspan fill="#8b949e">// If they sum up to &gt;1, normalize them.</tspan></text>
+  <text x="16" y="630"><tspan fill="#e6edf3">    </tspan><tspan fill="#7ee787">double</tspan><tspan fill="#e6edf3"> scale = total_probability &gt; </tspan><tspan fill="#d2a8ff">1</tspan><tspan fill="#e6edf3"> ? </tspan><tspan fill="#d2a8ff">1</tspan><tspan fill="#e6edf3"> / total_probability : </tspan><tspan fill="#d2a8ff">1</tspan><tspan fill="#e6edf3">;</tspan></text>
+  <text x="16" y="650"></text>
+  <text x="16" y="670"><tspan fill="#e6edf3">    </tspan><tspan fill="#7ee787">Vector3</tspan><tspan fill="#e6edf3"> pos = placement-&gt;</tspan><tspan fill="#56d4dd">get_transform</tspan><tspan fill="#e6edf3">(i).origin;</tspan></text>
+  <text x="16" y="690"><tspan fill="#e6edf3">    rng-&gt;</tspan><tspan fill="#56d4dd">seed_with_vec2</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#7ee787">Vector2</tspan><tspan fill="#e6edf3">(pos.x, pos.z));</tspan></text>
+  <text x="16" y="710"><tspan fill="#e6edf3">    </tspan><tspan fill="#7ee787">double</tspan><tspan fill="#e6edf3"> uniform = rng-&gt;</tspan><tspan fill="#56d4dd">randf</tspan><tspan fill="#e6edf3">();</tspan></text>
+  <text x="16" y="730"><tspan fill="#e6edf3">    </tspan><tspan fill="#8b949e">// Pick the collection that the uniform number falls into,</tspan></text>
+  <text x="16" y="750"><tspan fill="#e6edf3">    </tspan><tspan fill="#8b949e">// then rescale the number to [0..1) within it to pick the asset.</tspan></text>
+  <text x="16" y="770"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">uint32_t</tspan><tspan fill="#e6edf3"> j = </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">; j &lt; cols.</tspan><tspan fill="#56d4dd">size</tspan><tspan fill="#e6edf3">(); j++) {</tspan></text>
+  <text x="16" y="790"><tspan fill="#e6edf3">      </tspan><tspan fill="#7ee787">double</tspan><tspan fill="#e6edf3"> p = probabilities[j] * scale;</tspan></text>
+  <text x="16" y="810"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (uniform &lt; p) {</tspan></text>
+  <text x="16" y="830"><tspan fill="#e6edf3">        placement-&gt;</tspan><tspan fill="#56d4dd">place_asset</tspan><tspan fill="#e6edf3">(i, cols[j]-&gt;</tspan><tspan fill="#56d4dd">get_asset</tspan><tspan fill="#e6edf3">(uniform / p));</tspan></text>
+  <text x="16" y="850"><tspan fill="#e6edf3">        </tspan><tspan fill="#e3b341">break</tspan><tspan fill="#e6edf3">;</tspan></text>
+  <text x="16" y="870"><tspan fill="#e6edf3">      }</tspan></text>
+  <text x="16" y="890"><tspan fill="#e6edf3">      uniform -= p;</tspan></text>
+  <text x="16" y="910"><tspan fill="#e6edf3">    }</tspan></text>
+  <text x="16" y="930"><tspan fill="#e6edf3">  }</tspan></text>
+  <text x="16" y="950"><tspan fill="#e6edf3">}</tspan></text>
+  </g>
+</svg>

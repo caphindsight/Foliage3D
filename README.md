@@ -36,6 +36,8 @@ Foliage3D is written in [GD++](https://github.com/caphindsight/gdpp). GD++ is a 
 
 Foliage3D is partly meant as a first demonstration of GD++ on a fairly real project. The sources are in [`addons/foliage_3d/src`](addons/foliage_3d/src). Terrain3D is a separate GDExtension, and [`terrain_3d.gd++`](addons/foliage_3d/src/terrain_3d.gd++) shows how GD++ binds to another extension's classes at runtime.
 
+GitHub can't highlight GD++, so [`readme/index.md`](readme/index.md) shows each source file highlighted.
+
 ## Building
 
 ### Prerequisites
