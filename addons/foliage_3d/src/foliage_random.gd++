@@ -16,25 +16,8 @@ var sensitivity: float = 1e-3
 func create(master: int) -> FoliageRandom {
   Ref<FoliageRandom> rng;
   rng.instantiate();
-  rng->master_seed = splitmix_hash(splitmix_hash(master));
+  rng->master_seed = splitmix_hash(splitmix_hash(master as uint64_t)) as int64_t;
   return rng;
-}
-
-// Integer math wraps around like in GDScript: multiplications and additions go through uint64_t.
-
-@static
-func splitmix_hash(x: int) -> int {
-  x ^= x >> 30;
-  x = ((x as uint64_t) * 4564476756301768121ull) as int64_t;
-  x ^= x >> 27;
-  x = ((x as uint64_t) * 1499779743744070123ull) as int64_t;
-  x ^= x >> 31;
-  return x;
-}
-
-@static
-func splitmix_combine(a: int, b: int) -> int {
-  return a ^ ((b as uint64_t) + 2177342782468422677ull + ((a as uint64_t) << 6) + ((a >> 2) as uint64_t)) as int64_t;
 }
 
 func seed_with_float(value: float) -> void {
@@ -55,12 +38,27 @@ func seed_with_vec4(value: Vector4) -> void {
 }
 
 decl {
-  int64_t quantize(double value) const {
-    return splitmix_hash(Math::round(value / sensitivity) as int64_t);
+  // The SplitMix64 finalizer.
+  static uint64_t splitmix_hash(uint64_t x) {
+    x ^= x >> 30;
+    x *= 0xbf58476d1ce4e5b9ull;
+    x ^= x >> 27;
+    x *= 0x94d049bb133111ebull;
+    x ^= x >> 31;
+    return x;
   }
 
-  void reseed(int64_t hash) {
-    set_seed(splitmix_combine(master_seed, hash));
+  static uint64_t splitmix_combine(uint64_t a, uint64_t b) {
+    return a ^ (b + 0x9e3779b97f4a7c15ull + (a << 6) + (a >> 2));
+  }
+
+  uint64_t quantize(double value) const {
+    // Round to int64_t first: converting a negative double straight to uint64_t is undefined.
+    return splitmix_hash((Math::round(value / sensitivity) as int64_t) as uint64_t);
+  }
+
+  void reseed(uint64_t hash) {
+    set_seed(splitmix_combine(master_seed as uint64_t, hash));
     randf();  // Skip the first value, which is poorly mixed right after seeding.
   }
 }
