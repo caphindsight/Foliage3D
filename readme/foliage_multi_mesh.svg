@@ -10,7 +10,7 @@
   <text x="16" y="150"></text>
   <text x="16" y="170"><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> scene: </tspan><tspan fill="#7ee787">PackedScene</tspan></text>
   <text x="16" y="190"></text>
-  <text x="16" y="210"><tspan fill="#e3b341">func</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">_process</tspan><tspan fill="#e6edf3">(delta: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3">) -&gt; </tspan><tspan fill="#7ee787">void</tspan><tspan fill="#e6edf3"> {</tspan></text>
+  <text x="16" y="210"><tspan fill="#e3b341">process</tspan><tspan fill="#e6edf3">(delta: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3">) {</tspan></text>
   <text x="16" y="230"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">MultiMesh</tspan><tspan fill="#e6edf3">&gt; mm = </tspan><tspan fill="#56d4dd">get_multimesh</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="250"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">int64_t</tspan><tspan fill="#e6edf3"> count = mm.</tspan><tspan fill="#56d4dd">is_valid</tspan><tspan fill="#e6edf3">() ? mm-&gt;</tspan><tspan fill="#56d4dd">get_visible_instance_count</tspan><tspan fill="#e6edf3">() : </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="270"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (count &lt; </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">) {</tspan></text>

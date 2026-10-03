@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="5009" viewBox="0 0 1024 5009">
+<svg xmlns="http://www.w3.org/2000/svg" width="1066" height="5009" viewBox="0 0 1066 5009">
   <rect width="100%" height="100%" rx="8" fill="#0d1117"/>
   <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">
   <text x="16" y="30"><tspan fill="#8b949e">/// Procedurally generates foliage in a 3D scene using a quad tree.</tspan></text>
@@ -90,7 +90,7 @@
   <text x="16" y="1750"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> quad;</tspan></text>
   <text x="16" y="1770"><tspan fill="#e6edf3">  }</tspan></text>
   <text x="16" y="1790"></text>
-  <text x="16" y="1810"><tspan fill="#e6edf3">  </tspan><tspan fill="#8b949e">// Frees the chunks of the quad's subtree. Running tasks are cancelled, and freed by _process once they're done.</tspan></text>
+  <text x="16" y="1810"><tspan fill="#e6edf3">  </tspan><tspan fill="#8b949e">// Frees the chunks of the quad's subtree. Running tasks are cancelled, and freed by the process block once they're done.</tspan></text>
   <text x="16" y="1830"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">void</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">drop_chunks</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#7ee787">Quad</tspan><tspan fill="#e6edf3"> &amp;quad) {</tspan></text>
   <text x="16" y="1850"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#e3b341">auto</tspan><tspan fill="#e6edf3"> &amp;child : quad.children) {</tspan></text>
   <text x="16" y="1870"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (child) {</tspan></text>
@@ -213,7 +213,7 @@
   <text x="16" y="4210"><tspan fill="#e6edf3">  </tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4230"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="4250"></text>
-  <text x="16" y="4270"><tspan fill="#e3b341">func</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">_ready</tspan><tspan fill="#e6edf3">() -&gt; </tspan><tspan fill="#7ee787">void</tspan><tspan fill="#e6edf3"> {</tspan></text>
+  <text x="16" y="4270"><tspan fill="#e3b341">ready</tspan><tspan fill="#e6edf3"> {</tspan></text>
   <text x="16" y="4290"><tspan fill="#e6edf3">  </tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4310"><tspan fill="#e6edf3">  layers_.</tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4330"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">int64_t</tspan><tspan fill="#e6edf3"> i = </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">; i &lt; </tspan><tspan fill="#56d4dd">get_child_count</tspan><tspan fill="#e6edf3">(); i++) {</tspan></text>
@@ -229,7 +229,7 @@
   <text x="16" y="4530"><tspan fill="#e6edf3">  root_ = </tspan><tspan fill="#56d4dd">make_quad</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#7ee787">Rect2</tspan><tspan fill="#e6edf3">(-root_size / </tspan><tspan fill="#d2a8ff">2</tspan><tspan fill="#e6edf3">, -root_size / </tspan><tspan fill="#d2a8ff">2</tspan><tspan fill="#e6edf3">, root_size, root_size), root_lod);</tspan></text>
   <text x="16" y="4550"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="4570"></text>
-  <text x="16" y="4590"><tspan fill="#e3b341">func</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">_process</tspan><tspan fill="#e6edf3">(delta: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3">) -&gt; </tspan><tspan fill="#7ee787">void</tspan><tspan fill="#e6edf3"> {</tspan></text>
+  <text x="16" y="4590"><tspan fill="#e3b341">process</tspan><tspan fill="#e6edf3">(delta: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3">) {</tspan></text>
   <text x="16" y="4610"><tspan fill="#e6edf3">  std::</tspan><tspan fill="#56d4dd">erase_if</tspan><tspan fill="#e6edf3">(orphans_, [](</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *&gt; &amp;task) {</tspan></text>
   <text x="16" y="4630"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (!</tspan><tspan fill="#e3b341">is_done</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
   <text x="16" y="4650"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">false</tspan><tspan fill="#e6edf3">;</tspan></text>
