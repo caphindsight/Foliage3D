@@ -226,7 +226,7 @@ ready {
   root_ = make_quad(Rect2(-root_size / 2, -root_size / 2, root_size, root_size), root_lod);
 }
 
-process(delta) {
+process(delta: float) {
   std::erase_if(orphans_, [](Async<Node3D *> &task) {
     if (!is_done task) {
       return false;
