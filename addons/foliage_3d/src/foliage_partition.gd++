@@ -87,7 +87,7 @@ decl {
     return quad;
   }
 
-  // Frees the chunks of the quad's subtree. Running tasks are cancelled, and freed by _process once they're done.
+  // Frees the chunks of the quad's subtree. Running tasks are cancelled, and freed by the process block once they're done.
   void drop_chunks(Quad &quad) {
     for (auto &child : quad.children) {
       if (child) {
@@ -210,7 +210,7 @@ notif(PREDELETE) {
   clear();
 }
 
-func _ready() -> void {
+ready {
   clear();
   layers_.clear();
   for (int64_t i = 0; i < get_child_count(); i++) {
@@ -226,7 +226,7 @@ func _ready() -> void {
   root_ = make_quad(Rect2(-root_size / 2, -root_size / 2, root_size, root_size), root_lod);
 }
 
-func _process(delta: float) -> void {
+process(delta) {
   std::erase_if(orphans_, [](Async<Node3D *> &task) {
     if (!is_done task) {
       return false;
