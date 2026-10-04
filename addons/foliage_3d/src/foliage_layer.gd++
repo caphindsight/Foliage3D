@@ -101,6 +101,7 @@ func build_chunk(rect: Rect2, lod: int) -> Node3D {
     node->set_cast_shadows_setting(batch.asset->cast_shadow as GeometryInstance3D::ShadowCastingSetting);
     if (batch.use_scene) {
       node->scene = batch.asset->scene;
+      node->scene_mode = batch.asset->scene_mode;
     }
     chunk->add_child(node);
   }

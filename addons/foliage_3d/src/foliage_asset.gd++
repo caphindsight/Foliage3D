@@ -5,6 +5,7 @@ class_name FoliageAsset
 extends Resource
 
 enum ShadowCastingSetting { extends GeometryInstance3D.ShadowCastingSetting }
+enum FoliageSceneMode { REPLACE ADD }
 
 /// A mesh for each level of detail this asset supports.
 @export_group("Visuals")
@@ -27,6 +28,11 @@ enum ShadowCastingSetting { extends GeometryInstance3D.ShadowCastingSetting }
 /// Such assets are represented by instances of this scene, rather than with GPU instancing.
 /// This makes nearby foliage interactive.
 @export var scene: PackedScene
+
+/// What to do with the instanced scene.
+/// [code]Replace[/code] - replaces the multimesh instances with scenes.
+/// [code]Add[/code] - adds scenes to multimesh instances.
+@export var scene_mode: FoliageSceneMode
 
 /// Picks a random yaw for each asset.
 @export_group("Transform")
