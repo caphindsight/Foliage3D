@@ -105,38 +105,6 @@ decl {
     }
   }
 
-  // Frees all chunks, waiting for the running tasks.
-  void clear() {
-    if (root_) {
-      drop_chunks(*root_);
-      root_.reset();
-    }
-    for (Async<Node3D *> &task : orphans_) {
-      task.wait();
-      if (Node3D *node = claim task) {
-        destroy node;
-      }
-    }
-    orphans_.clear();
-  }
-
-  // The largest angle under which the observer sees two corners of the rect.
-  double angular_size(const Rect2 &rect) const {
-    if (rect.has_point(observer_)) {
-      return Math::PI;
-    }
-    Vector2 p = rect.position;
-    Vector2 q = rect.get_end();
-    Vector2 corners[4] = {p - observer_, q - observer_, Vector2(p.x, q.y) - observer_, Vector2(q.x, p.y) - observer_};
-    double res = 0;
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < i; j++) {
-        res = MAX(res, Math::abs(corners[i].angle_to(corners[j])));
-      }
-    }
-    return res;
-  }
-
   // Splits quads that look big and merges quads that look small.
   void restructure(Quad &quad) {
     double angle = angular_size(quad.rect);
@@ -203,6 +171,40 @@ decl {
     }
     return subtree_ready;
   }
+}
+
+// Frees all chunks, waiting for the running tasks.
+@private
+func clear() -> void {
+  if (root_) {
+    drop_chunks(*root_);
+    root_.reset();
+  }
+  for (Async<Node3D *> &task : orphans_) {
+    task.wait();
+    if (Node3D *node = claim task) {
+      destroy node;
+    }
+  }
+  orphans_.clear();
+}
+
+// The largest angle under which the observer sees two corners of the rect.
+@private @const
+func angular_size(rect: Rect2) -> float {
+  if (rect.has_point(observer_)) {
+    return Math::PI;
+  }
+  Vector2 p = rect.position;
+  Vector2 q = rect.get_end();
+  Vector2 corners[4] = {p - observer_, q - observer_, Vector2(p.x, q.y) - observer_, Vector2(q.x, p.y) - observer_};
+  double res = 0;
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < i; j++) {
+      res = MAX(res, Math::abs(corners[i].angle_to(corners[j])));
+    }
+  }
+  return res;
 }
 
 // Before the layers (our children) are freed, since tasks use them.

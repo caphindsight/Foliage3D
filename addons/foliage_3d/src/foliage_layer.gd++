@@ -88,8 +88,7 @@ func build_chunk(rect: Rect2, lod: int) -> Node3D {
   chunk->set_position(origin);
   for (KeyValue<const Mesh *, Batch> &entry : batches) {
     Batch &batch = entry.value;
-    Ref<MultiMesh> multimesh;
-    multimesh.instantiate();
+    Ref<MultiMesh> multimesh = create MultiMesh;
     multimesh->set_transform_format(MultiMesh::TRANSFORM_3D);
     multimesh->set_mesh(batch.mesh);
     multimesh->set_instance_count(batch.transforms.size());
@@ -111,8 +110,7 @@ func build_chunk(rect: Rect2, lod: int) -> Node3D {
 /// Samples the randomized lattice nodes inside [param rect] on the terrain.
 /// [b]Warning:[/b] it runs on a worker thread!
 func prepare_placement(rect: Rect2) -> FoliagePlacement {
-  Ref<FoliagePlacement> placement;
-  placement.instantiate();
+  Ref<FoliagePlacement> placement = create FoliagePlacement;
   placement->terrain_data = terrain_data;
 
   // Jitter can move nodes by up to one spacing, so look a bit beyond the rect.

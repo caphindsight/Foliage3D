@@ -96,9 +96,8 @@ func get_asset(uniform: float) -> FoliageAsset {
   return index < assets.size() ? assets[index] as Ref<FoliageAsset> : nullptr;
 }
 
-decl {
-  // 1 if the texture is one of [member textures], 0 otherwise.
-  double texture_weight(int64_t id) const {
-    return id >= 0 && id < 64 && (texture_mask_ & (1ull << id)) ? 1.0 : 0.0;
-  }
+// 1 if the texture is one of [member textures], 0 otherwise.
+@private @const
+func texture_weight(id: int) -> float {
+  return id >= 0 && id < 64 && (texture_mask_ & (1ull << id)) ? 1.0 : 0.0;
 }
