@@ -206,11 +206,11 @@ decl {
 }
 
 // Before the layers (our children) are freed, since tasks use them.
-notif(PREDELETE) {
+on predelete {
   clear();
 }
 
-ready {
+on ready {
   clear();
   layers_.clear();
   for (int64_t i = 0; i < get_child_count(); i++) {
@@ -226,7 +226,7 @@ ready {
   root_ = make_quad(Rect2(-root_size / 2, -root_size / 2, root_size, root_size), root_lod);
 }
 
-process(delta: float) {
+on process(delta: float) {
   std::erase_if(orphans_, [](Async<Node3D *> &task) {
     if (!is_done task) {
       return false;

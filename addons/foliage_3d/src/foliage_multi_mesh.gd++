@@ -7,7 +7,7 @@ extends MultiMeshInstance3D
 
 var scene: PackedScene
 
-process(delta: float) {
+on process(delta: float) {
   Ref<MultiMesh> mm = get_multimesh();
   int64_t count = mm.is_valid() ? mm->get_visible_instance_count() : 0;
   if (count < 0) {

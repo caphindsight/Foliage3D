@@ -209,11 +209,11 @@
   <text x="16" y="4130"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="4150"></text>
   <text x="16" y="4170"><tspan fill="#8b949e">// Before the layers (our children) are freed, since tasks use them.</tspan></text>
-  <text x="16" y="4190"><tspan fill="#e3b341">notif</tspan><tspan fill="#e6edf3">(PREDELETE) {</tspan></text>
+  <text x="16" y="4190"><tspan fill="#e3b341">on predelete</tspan><tspan fill="#e6edf3"> {</tspan></text>
   <text x="16" y="4210"><tspan fill="#e6edf3">  </tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4230"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="4250"></text>
-  <text x="16" y="4270"><tspan fill="#e3b341">ready</tspan><tspan fill="#e6edf3"> {</tspan></text>
+  <text x="16" y="4270"><tspan fill="#e3b341">on ready</tspan><tspan fill="#e6edf3"> {</tspan></text>
   <text x="16" y="4290"><tspan fill="#e6edf3">  </tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4310"><tspan fill="#e6edf3">  layers_.</tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4330"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">int64_t</tspan><tspan fill="#e6edf3"> i = </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">; i &lt; </tspan><tspan fill="#56d4dd">get_child_count</tspan><tspan fill="#e6edf3">(); i++) {</tspan></text>
@@ -229,7 +229,7 @@
   <text x="16" y="4530"><tspan fill="#e6edf3">  root_ = </tspan><tspan fill="#56d4dd">make_quad</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#7ee787">Rect2</tspan><tspan fill="#e6edf3">(-root_size / </tspan><tspan fill="#d2a8ff">2</tspan><tspan fill="#e6edf3">, -root_size / </tspan><tspan fill="#d2a8ff">2</tspan><tspan fill="#e6edf3">, root_size, root_size), root_lod);</tspan></text>
   <text x="16" y="4550"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="4570"></text>
-  <text x="16" y="4590"><tspan fill="#e3b341">process</tspan><tspan fill="#e6edf3">(delta: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3">) {</tspan></text>
+  <text x="16" y="4590"><tspan fill="#e3b341">on process</tspan><tspan fill="#e6edf3">(delta: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3">) {</tspan></text>
   <text x="16" y="4610"><tspan fill="#e6edf3">  std::</tspan><tspan fill="#56d4dd">erase_if</tspan><tspan fill="#e6edf3">(orphans_, [](</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *&gt; &amp;task) {</tspan></text>
   <text x="16" y="4630"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (!</tspan><tspan fill="#e3b341">is_done</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
   <text x="16" y="4650"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">false</tspan><tspan fill="#e6edf3">;</tspan></text>
