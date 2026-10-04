@@ -122,9 +122,9 @@ func prepare_placement(rect: Rect2) -> FoliagePlacement {
   int64_t j1 = Math::floor((rect.position.y - margin) / lattice_spacing) as int64_t;
   int64_t j2 = Math::ceil((rect.get_end().y + margin) / lattice_spacing) as int64_t;
 
-  Ref<FoliageRandom> rand_jitter_x = FoliageRandom::create(571658977732);
-  Ref<FoliageRandom> rand_jitter_y = FoliageRandom::create(4319594216159);
-  Ref<FoliageRandom> rand_keep = FoliageRandom::create(2812107841962);
+  Ref<FoliageRandom> rand_jitter_x = FoliageRandom::seeded(571658977732);
+  Ref<FoliageRandom> rand_jitter_y = FoliageRandom::seeded(4319594216159);
+  Ref<FoliageRandom> rand_keep = FoliageRandom::seeded(2812107841962);
   for (int64_t i = i1; i < i2 && !is_cancelled; i++) {
     for (int64_t j = j1; j < j2; j++) {
       Vector2 position(lattice_spacing * i, lattice_spacing * j);

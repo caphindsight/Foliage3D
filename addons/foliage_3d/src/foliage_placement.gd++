@@ -12,10 +12,10 @@ var overlay_texture_ids: PackedInt32Array
 var texture_blend_amounts: PackedFloat32Array
 
 decl {
-  Ref<FoliageRandom> random_pitch_ = FoliageRandom::create(-3030054608389);
-  Ref<FoliageRandom> random_pitch_axis_ = FoliageRandom::create(5851782439795);
-  Ref<FoliageRandom> random_yaw_ = FoliageRandom::create(5558960081466);
-  Ref<FoliageRandom> random_scale_ = FoliageRandom::create(8422615989223);
+  Ref<FoliageRandom> random_pitch_ = FoliageRandom::seeded(-3030054608389);
+  Ref<FoliageRandom> random_pitch_axis_ = FoliageRandom::seeded(5851782439795);
+  Ref<FoliageRandom> random_yaw_ = FoliageRandom::seeded(5558960081466);
+  Ref<FoliageRandom> random_scale_ = FoliageRandom::seeded(8422615989223);
 }
 
 /// Count of the available points on the grid.

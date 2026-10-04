@@ -20,7 +20,7 @@ func _place(placement: FoliagePlacement) -> void {
   LocalVector<double> probabilities;
   probabilities.resize(cols.size());
 
-  Ref<FoliageRandom> rng = FoliageRandom::create(772364723);
+  Ref<FoliageRandom> rng = FoliageRandom::seeded(772364723);
   for (int64_t i = 0; i < placement->size(); i++) {
     double total_probability = 0;
     for (uint32_t j = 0; j < cols.size(); j++) {

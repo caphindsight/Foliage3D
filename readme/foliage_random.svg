@@ -16,7 +16,7 @@
   <text x="16" y="270"></text>
   <text x="16" y="290"><tspan fill="#8b949e">/// Creates a generator with the given master seed.</tspan></text>
   <text x="16" y="310"><tspan fill="#79c0ff">@static</tspan></text>
-  <text x="16" y="330"><tspan fill="#e3b341">func</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">create</tspan><tspan fill="#e6edf3">(master: </tspan><tspan fill="#7ee787">int</tspan><tspan fill="#e6edf3">) -&gt; </tspan><tspan fill="#7ee787">FoliageRandom</tspan><tspan fill="#e6edf3"> {</tspan></text>
+  <text x="16" y="330"><tspan fill="#e3b341">func</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">seeded</tspan><tspan fill="#e6edf3">(master: </tspan><tspan fill="#7ee787">int</tspan><tspan fill="#e6edf3">) -&gt; </tspan><tspan fill="#7ee787">FoliageRandom</tspan><tspan fill="#e6edf3"> {</tspan></text>
   <text x="16" y="350"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageRandom</tspan><tspan fill="#e6edf3">&gt; rng;</tspan></text>
   <text x="16" y="370"><tspan fill="#e6edf3">  rng.</tspan><tspan fill="#56d4dd">instantiate</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="390"><tspan fill="#e6edf3">  rng-&gt;master_seed = </tspan><tspan fill="#56d4dd">splitmix_hash</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#56d4dd">splitmix_hash</tspan><tspan fill="#e6edf3">(master </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">uint64_t</tspan><tspan fill="#e6edf3">)) </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">int64_t</tspan><tspan fill="#e6edf3">;</tspan></text>
