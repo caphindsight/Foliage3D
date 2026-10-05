@@ -1,5 +1,5 @@
 # GD++ package-level ignores
-/.gd++pkg/**
+/.gd++build/**
 /lib*.dll
 /lib*.so
 /lib*.dylib

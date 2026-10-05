@@ -11,7 +11,7 @@
 **/~*
 
 # GD++ project-level ignores
-/.gd++proj/**
+/.gd++cache/**
 **.swo
 **.swp
 **.tmp
