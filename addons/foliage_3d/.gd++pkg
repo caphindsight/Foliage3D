@@ -3,3 +3,4 @@ spec = "4.7.2-stable"
 syntax = 1
 std = "c++20"
 prefix = "Foliage3D"
+hide = ["src"]
