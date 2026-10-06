@@ -14,7 +14,7 @@ var sensitivity: float = 1e-3
 /// Creates a generator with the given master seed.
 @static
 func seeded(master: int) -> FoliageRandom {
-  Ref<FoliageRandom> rng = create FoliageRandom;
+  Gd<FoliageRandom> rng = create FoliageRandom;
   rng->master_seed = splitmix_hash(splitmix_hash(master as uint64_t)) as int64_t;
   return rng;
 }

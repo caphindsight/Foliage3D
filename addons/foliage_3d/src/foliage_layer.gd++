@@ -47,21 +47,21 @@ func shows_lod(lod: int) -> bool {
 /// Returns [code]null[/code] if the task was cancelled.
 @onthread
 func build_chunk(rect: Rect2, lod: int) -> Node3D {
-  Ref<FoliagePlacement> placement = prepare_placement(rect);
+  Gd<FoliagePlacement> placement = prepare_placement(rect);
   _place(placement);
 
   // Group the instances by mesh: each mesh becomes one multimesh.
   struct Batch {
-    Ref<Mesh> mesh;
-    Ref<FoliageAsset> asset;
+    Gd<Mesh> mesh;
+    Gd<FoliageAsset> asset;
     bool use_scene = false;
     LocalVector<Transform3D> transforms;
   };
   HashMap<const Mesh *, Batch> batches;
   Vector3 origin(rect.get_center().x, 0, rect.get_center().y);
   for (int64_t i = 0; i < placement->size(); i++) {
-    Ref<FoliageAsset> asset = placement->get_asset(i);
-    if (asset.is_null() || lod >= asset->lod_map.size()) {
+    Gd<FoliageAsset> asset = placement->get_asset(i);
+    if (!asset || lod >= asset->lod_map.size()) {
       continue;
     }
     int64_t asset_lod = asset->lod_map[lod];
@@ -70,8 +70,8 @@ func build_chunk(rect: Rect2, lod: int) -> Node3D {
     if (asset_lod >= asset->lods.size()) {
       continue;
     }
-    Ref<Mesh> mesh = asset->lods[asset_lod] as Ref<Mesh>;
-    if (mesh.is_null()) {
+    Gd<Mesh> mesh = asset->lods[asset_lod] as Gd<Mesh>;
+    if (!mesh) {
       continue;
     }
     if (!batches.has(mesh.ptr())) {
@@ -83,19 +83,19 @@ func build_chunk(rect: Rect2, lod: int) -> Node3D {
   if (is_cancelled) {
     return nullptr;
   }
-  Node3D *chunk = create Node3D;
+  Gd<Node3D> chunk = create Node3D;
   chunk->hide();
   chunk->set_position(origin);
   for (KeyValue<const Mesh *, Batch> &entry : batches) {
     Batch &batch = entry.value;
-    Ref<MultiMesh> multimesh = create MultiMesh;
+    Gd<MultiMesh> multimesh = create MultiMesh;
     multimesh->set_transform_format(MultiMesh::TRANSFORM_3D);
     multimesh->set_mesh(batch.mesh);
     multimesh->set_instance_count(batch.transforms.size());
     for (uint32_t i = 0; i < batch.transforms.size(); i++) {
       multimesh->set_instance_transform(i, batch.transforms[i]);
     }
-    FoliageMultiMesh *node = create FoliageMultiMesh;
+    Gd<FoliageMultiMesh> node = create FoliageMultiMesh;
     node->set_multimesh(multimesh);
     node->set_cast_shadows_setting(batch.asset->cast_shadow as GeometryInstance3D::ShadowCastingSetting);
     if (batch.use_scene) {
@@ -110,7 +110,7 @@ func build_chunk(rect: Rect2, lod: int) -> Node3D {
 /// Samples the randomized lattice nodes inside [param rect] on the terrain.
 /// [b]Warning:[/b] it runs on a worker thread!
 func prepare_placement(rect: Rect2) -> FoliagePlacement {
-  Ref<FoliagePlacement> placement = create FoliagePlacement;
+  Gd<FoliagePlacement> placement = create FoliagePlacement;
   placement->terrain_data = terrain_data;
 
   // Jitter can move nodes by up to one spacing, so look a bit beyond the rect.
@@ -120,9 +120,9 @@ func prepare_placement(rect: Rect2) -> FoliagePlacement {
   int64_t j1 = Math::floor((rect.position.y - margin) / lattice_spacing) as int64_t;
   int64_t j2 = Math::ceil((rect.get_end().y + margin) / lattice_spacing) as int64_t;
 
-  Ref<FoliageRandom> rand_jitter_x = FoliageRandom::seeded(571658977732);
-  Ref<FoliageRandom> rand_jitter_y = FoliageRandom::seeded(4319594216159);
-  Ref<FoliageRandom> rand_keep = FoliageRandom::seeded(2812107841962);
+  Gd<FoliageRandom> rand_jitter_x = FoliageRandom::seeded(571658977732);
+  Gd<FoliageRandom> rand_jitter_y = FoliageRandom::seeded(4319594216159);
+  Gd<FoliageRandom> rand_keep = FoliageRandom::seeded(2812107841962);
   for (int64_t i = i1; i < i2 && !is_cancelled; i++) {
     for (int64_t j = j1; j < j2; j++) {
       Vector2 position(lattice_spacing * i, lattice_spacing * j);

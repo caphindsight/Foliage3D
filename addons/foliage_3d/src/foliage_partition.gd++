@@ -56,8 +56,8 @@ signal foliage_is_ready
 decl {
   // The chunk of one layer on one quad.
   struct Chunk {
-    Async<Node3D *> task;    // Running while the chunk is built; empty once it's claimed, or if the LOD is hidden.
-    Node3D *node = nullptr;  // The built chunk, a child of its layer.
+    Async<Gd<Node3D>> task;  // Running while the chunk is built; empty once it's claimed, or if the LOD is hidden.
+    Gd<Node3D> node;         // The built chunk, a child of its layer.
   };
 
   struct Quad {
@@ -68,9 +68,9 @@ decl {
     bool has_children() const { return children[0] != nullptr; }
   };
 
-  std::vector<FoliageLayer *> layers_;
+  std::vector<Gd<FoliageLayer>> layers_;
   std::unique_ptr<Quad> root_;
-  std::vector<Async<Node3D *>> orphans_;  // Tasks of dropped chunks that still run.
+  std::vector<Async<Gd<Node3D>>> orphans_;  // Tasks of dropped chunks that still run.
   Vector2 observer_;
 
   // Creates a quad, and starts building its chunks on all layers.
@@ -128,7 +128,7 @@ decl {
   }
 
   // Adds the chunk to its layer once it's built. Returns whether it's ready.
-  bool poll(Chunk &chunk, FoliageLayer *layer) {
+  bool poll(Chunk &chunk, Gd<FoliageLayer> layer) {
     if (is_done chunk.task) {
       chunk.node = claim chunk.task;
       if (chunk.node) {
@@ -163,7 +163,7 @@ decl {
       chunk.node->set_visible(!children_ready);
       if (quad.has_children() && !children_ready) {
         for (auto &child : quad.children) {
-          if (Node3D *node = child->chunks[i].node) {
+          if (Gd<Node3D> node = child->chunks[i].node) {
             node->hide();
           }
         }
@@ -180,9 +180,9 @@ func clear() -> void {
     drop_chunks(*root_);
     root_.reset();
   }
-  for (Async<Node3D *> &task : orphans_) {
+  for (Async<Gd<Node3D>> &task : orphans_) {
     task.wait();
-    if (Node3D *node = claim task) {
+    if (Gd<Node3D> node = claim task) {
       destroy node;
     }
   }
@@ -216,7 +216,7 @@ on ready {
   clear();
   layers_.clear();
   for (int64_t i = 0; i < get_child_count(); i++) {
-    if (FoliageLayer *layer = get_child(i) as FoliageLayer *) {
+    if (auto layer = get_child(i) as Gd<FoliageLayer>) {
       layers_.push_back(layer);
       if (terrain) {
         layer->terrain_data = terrain->get_data();
@@ -229,18 +229,18 @@ on ready {
 }
 
 on process(delta: float) {
-  std::erase_if(orphans_, [](Async<Node3D *> &task) {
+  std::erase_if(orphans_, [](Async<Gd<Node3D>> &task) {
     if (!is_done task) {
       return false;
     }
-    if (Node3D *node = claim task) {
+    if (Gd<Node3D> node = claim task) {
       destroy node;
     }
     return true;
   });
 
-  Viewport *viewport = get_viewport();
-  Camera3D *camera = viewport ? viewport->get_camera_3d() : nullptr;
+  Gd<Viewport> viewport = get_viewport();
+  Gd<Camera3D> camera = viewport ? viewport->get_camera_3d() : nullptr;
   Vector3 observer = camera ? camera->get_global_position() : Vector3();
   observer_ = Vector2(observer.x, observer.z);
 

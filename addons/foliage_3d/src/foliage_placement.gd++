@@ -12,10 +12,10 @@ var overlay_texture_ids: PackedInt32Array
 var texture_blend_amounts: PackedFloat32Array
 
 decl {
-  Ref<FoliageRandom> random_pitch_ = FoliageRandom::seeded(-3030054608389);
-  Ref<FoliageRandom> random_pitch_axis_ = FoliageRandom::seeded(5851782439795);
-  Ref<FoliageRandom> random_yaw_ = FoliageRandom::seeded(5558960081466);
-  Ref<FoliageRandom> random_scale_ = FoliageRandom::seeded(8422615989223);
+  Gd<FoliageRandom> random_pitch_ = FoliageRandom::seeded(-3030054608389);
+  Gd<FoliageRandom> random_pitch_axis_ = FoliageRandom::seeded(5851782439795);
+  Gd<FoliageRandom> random_yaw_ = FoliageRandom::seeded(5558960081466);
+  Gd<FoliageRandom> random_scale_ = FoliageRandom::seeded(8422615989223);
 }
 
 /// Count of the available points on the grid.
@@ -71,7 +71,7 @@ func get_slope(i: int) -> float {
 /// If there isn't an asset currently placed, returns [code]null[/code].
 @const
 func get_asset(i: int) -> FoliageAsset {
-  return assets[i] as Ref<FoliageAsset>;
+  return assets[i] as Gd<FoliageAsset>;
 }
 
 /// Set the asset placed at the i-th available grid point.
@@ -84,7 +84,7 @@ func set_asset(i: int, asset: FoliageAsset) -> void {
 /// according to the parameters set on the [FoliageAsset] resource.
 func place_asset(i: int, asset: FoliageAsset) -> void {
   assets[i] = asset;
-  if (asset.is_null()) {
+  if (!asset) {
     return;
   }
   const Vector3 up(0, 1, 0);

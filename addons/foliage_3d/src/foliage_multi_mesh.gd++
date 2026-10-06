@@ -13,25 +13,25 @@ decl {
 }
 
 on ready {
-  Ref<MultiMesh> mm = get_multimesh();
-  count_ = mm.is_valid() ? mm->get_visible_instance_count() : 0;
+  Gd<MultiMesh> mm = get_multimesh();
+  count_ = mm ? mm->get_visible_instance_count() : 0;
   if (count_ < 0) {
     count_ = mm->get_instance_count();  // -1 means all instances are visible.
   }
 }
 
 on process(delta: float) {
-  if (scene.is_null() || count_ == 0) {
+  if (!scene || count_ == 0) {
     set_process(false);
     return;
   }
-  Ref<MultiMesh> mm = get_multimesh();
+  Gd<MultiMesh> mm = get_multimesh();
   count_--;
   if (scene_mode == FoliageSceneMode::REPLACE) {
     mm->set_visible_instance_count(count_);
   }
-  Node *instance = scene->instantiate();
-  if (Node3D *instance3d = instance as Node3D *) {
+  Gd<Node> instance = scene->instantiate();
+  if (auto instance3d = instance as Gd<Node3D>) {
     instance3d->set_transform(mm->get_instance_transform(count_));
   }
   add_child(instance);

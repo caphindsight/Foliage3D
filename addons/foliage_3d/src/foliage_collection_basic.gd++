@@ -75,13 +75,13 @@ func get_collection_probability(placement: FoliagePlacement, i: int) -> float {
         texture_weight(placement->overlay_texture_ids[i]) * placement->texture_blend_amounts[i];
   }
   Vector3 position = placement->get_transform(i).origin;
-  if (height_density_curve.is_valid()) {
+  if (height_density_curve) {
     probability *= height_density_curve->sample(position.y);
   }
-  if (slope_density_curve.is_valid()) {
+  if (slope_density_curve) {
     probability *= slope_density_curve->sample(Math::rad_to_deg(placement->get_slope(i)));
   }
-  if (density_noise.is_valid()) {
+  if (density_noise) {
     probability *= density_noise->get_noise_2d(position.x, position.z) / 2.0 + 0.5;
   }
   return probability;
@@ -93,7 +93,7 @@ func get_asset(uniform: float) -> FoliageAsset {
   int64_t index = cumulative_probabilities_.is_empty()
       ? (uniform * assets.size()) as int64_t
       : cumulative_probabilities_.bsearch(uniform);
-  return index < assets.size() ? assets[index] as Ref<FoliageAsset> : nullptr;
+  return index < assets.size() ? assets[index] as Gd<FoliageAsset> : nullptr;
 }
 
 // 1 if the texture is one of [member textures], 0 otherwise.

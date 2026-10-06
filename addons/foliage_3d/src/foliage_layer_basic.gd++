@@ -11,16 +11,16 @@ extends FoliageLayer
 
 @override("final")
 func _place(placement: FoliagePlacement) -> void {
-  LocalVector<Ref<FoliageCollectionBasic>> cols;
+  LocalVector<Gd<FoliageCollectionBasic>> cols;
   for (int64_t j = 0; j < collections.size(); j++) {
-    if (Ref<FoliageCollectionBasic> col = collections[j] as Ref<FoliageCollectionBasic>; col.is_valid()) {
+    if (auto col = collections[j] as Gd<FoliageCollectionBasic>) {
       cols.push_back(col);
     }
   }
   LocalVector<double> probabilities;
   probabilities.resize(cols.size());
 
-  Ref<FoliageRandom> rng = FoliageRandom::seeded(772364723);
+  Gd<FoliageRandom> rng = FoliageRandom::seeded(772364723);
   for (int64_t i = 0; i < placement->size(); i++) {
     double total_probability = 0;
     for (uint32_t j = 0; j < cols.size(); j++) {
