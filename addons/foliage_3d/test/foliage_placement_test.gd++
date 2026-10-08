@@ -1,0 +1,158 @@
+// Tests of FoliagePlacement: its points, and placing assets on them.
+@test
+class_name FoliagePlacementTest
+extends Node
+
+@test
+func add_point_fills_every_array() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  assert p->size() == 0;
+  p->add_point(Transform3D(Basis(), Vector3(1, 2, 3)), Vector3(0, 1, 0), 4, 5, 0.25);
+  p->add_point(Transform3D(Basis(), Vector3(6, 7, 8)), Vector3(1, 0, 0), 0, -1, 0.0);
+  assert p->size() == 2;
+  assert p->get_transform(0).origin == Vector3(1, 2, 3);
+  assert p->get_height(1) == 7;
+  assert p->get_normal(1) == Vector3(1, 0, 0);
+  assert !p->get_asset(0);
+  assert p->base_texture_ids[0] == 4;
+  assert p->overlay_texture_ids[0] == 5;
+  assert p->texture_blend_amounts[0] == 0.25;
+}
+
+@test
+func resize() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(Basis(), Vector3(1, 2, 3)), Vector3(0, 1, 0), 4, 5, 0.25);
+  p->resize(3, true);
+  assert p->size() == 3;
+  assert p->get_transform(0).origin == Vector3(1, 2, 3);
+  assert p->normals.size() == 3 && p->texture_blend_amounts.size() == 3;
+
+  p->resize(2);  // Without preserve, the old points are gone.
+  assert p->size() == 2;
+  assert p->get_transform(0).origin == Vector3();
+  assert p->base_texture_ids[0] == 0;
+}
+
+@test
+func slope_is_the_angle_to_up() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(), Vector3(0, 1, 0), 0, -1, 0.0);
+  p->add_point(Transform3D(), Vector3(1, 0, 0), 0, -1, 0.0);
+  p->add_point(Transform3D(), Vector3(1, 1, 0).normalized(), 0, -1, 0.0);
+  p->add_point(Transform3D(), Vector3(0, -1, 0), 0, -1, 0.0);  // Upside down counts as flat.
+  assert Math::is_zero_approx(p->get_slope(0));
+  assert Math::is_equal_approx(p->get_slope(1), Math::PI / 2);
+  assert Math::is_equal_approx(p->get_slope(2), Math::PI / 4);
+  assert Math::is_zero_approx(p->get_slope(3));
+}
+
+@test
+func sample_texture_blends() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(), Vector3(0, 1, 0), 2, 5, 0.25);
+  p->add_point(Transform3D(), Vector3(0, 1, 0), 3, 3, 0.4);
+  assert Math::is_equal_approx(p->sample_texture(0, 2), 0.75);
+  assert Math::is_equal_approx(p->sample_texture(0, 5), 0.25);
+  assert p->sample_texture(0, 7) == 0;
+  assert Math::is_equal_approx(p->sample_texture(1, 3), 1.0);  // Both layers are the same texture.
+}
+
+@test
+func place_null_removes_the_asset() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(Basis(), Vector3(1, 0, 1)), Vector3(0, 1, 0), 0, -1, 0.0);
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  p->place_asset(0, asset);
+  assert p->get_asset(0) == asset;
+  Transform3D placed = p->get_transform(0);
+  p->place_asset(0, nullptr);
+  assert !p->get_asset(0);
+  assert p->get_transform(0) == placed;
+}
+
+@test
+func place_without_randomness_keeps_the_transform() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(Basis(), Vector3(3, 1, -2)), Vector3(0, 1, 0), 0, -1, 0.0);
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->randomize_yaw = false;
+  asset->randomize_pitch = false;
+  p->place_asset(0, asset);
+  assert p->get_transform(0).is_equal_approx(Transform3D(Basis(), Vector3(3, 1, -2)));
+}
+
+@test
+func place_scales_within_range() {
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->scale_min = 2;
+  asset->scale_max = 3;
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  for (int i = 0; i < 64; i++) {
+    p->add_point(Transform3D(Basis(), Vector3(i * 7.5, 0, i * -3.25)), Vector3(0, 1, 0), 0, -1, 0.0);
+  }
+  double lo = 10, hi = 0;
+  for (int i = 0; i < p->size(); i++) {
+    p->place_asset(i, asset);
+    Vector3 scale = p->get_transform(i).basis.get_scale();
+    assert Math::is_equal_approx(scale.x, scale.y) && Math::is_equal_approx(scale.y, scale.z);
+    assert scale.x >= 2 - 1e-4 && scale.x <= 3 + 1e-4;
+    lo = MIN(lo, scale.x as double);
+    hi = MAX(hi, scale.x as double);
+  }
+  assert hi - lo > 0.5;  // Not one scale for all.
+}
+
+@test
+func place_tilts_within_pitch_range() {
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->pitch_min = 0.2;
+  asset->pitch_max = 0.4;
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  for (int i = 0; i < 32; i++) {
+    p->add_point(Transform3D(Basis(), Vector3(i * 11, 0, i * 5)), Vector3(0, 1, 0), 0, -1, 0.0);
+    p->place_asset(i, asset);
+    Vector3 up = p->get_transform(i).basis.get_column(1).normalized();
+    double tilt = up.angle_to(Vector3(0, 1, 0));
+    assert tilt >= 0.2 - 1e-4 && tilt <= 0.4 + 1e-4;
+  }
+}
+
+@test
+func place_aligns_to_the_normal() {
+  Vector3 normal = Vector3(1, 1, 0).normalized();
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(Basis(), Vector3(4, 2, 8)), normal, 0, -1, 0.0);
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->align_to_normal = 1;
+  p->place_asset(0, asset);
+  assert p->get_transform(0).basis.get_column(1).normalized().is_equal_approx(normal);
+  assert p->get_transform(0).origin == Vector3(4, 2, 8);
+
+  asset->align_to_normal = 0.5;
+  Gd<FoliagePlacement> half = create FoliagePlacement;
+  half->add_point(Transform3D(Basis(), Vector3(4, 2, 8)), normal, 0, -1, 0.0);
+  half->place_asset(0, asset);
+  double tilt = half->get_transform(0).basis.get_column(1).angle_to(Vector3(0, 1, 0));
+  assert Math::abs(tilt - Math::PI / 8) < 1e-3;
+}
+
+// The same point gets the same transform in any placement, e.g. of neighboring chunks.
+@test
+func place_is_deterministic() {
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->pitch_max = 0.5;
+  asset->scale_min = 0.5;
+  asset->scale_max = 1.5;
+  Gd<FoliagePlacement> a = create FoliagePlacement;
+  a->add_point(Transform3D(Basis(), Vector3(17.25, 3, -40.5)), Vector3(0, 1, 0), 0, -1, 0.0);
+  Gd<FoliagePlacement> b = create FoliagePlacement;
+  b->add_point(Transform3D(Basis(), Vector3(17.25, 3, -40.5)), Vector3(0, 1, 0), 0, -1, 0.0);
+  Gd<FoliagePlacement> c = create FoliagePlacement;
+  c->add_point(Transform3D(Basis(), Vector3(18.25, 3, -40.5)), Vector3(0, 1, 0), 0, -1, 0.0);
+  a->place_asset(0, asset);
+  b->place_asset(0, asset);
+  c->place_asset(0, asset);
+  assert a->get_transform(0) == b->get_transform(0);
+  assert a->get_transform(0).basis != c->get_transform(0).basis;
+}

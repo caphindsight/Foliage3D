@@ -1,0 +1,88 @@
+// Tests of FoliagePartition: its quad tree of chunks, without a terrain or a camera, so the observer is at the origin.
+@test
+class_name FoliagePartitionTest
+extends Node
+
+// Declares a small world: LODs 0 to 3, with chunks of 32 to 256 m, the FoliagePartition named partition, and its one
+// layer, a FoliageLayerBasic named layer, with one asset, placed on every LOD.
+macro small_partition(partition, layer) {
+  local code = [[
+    Gd<FoliagePartition> PARTITION = create FoliagePartition;
+    PARTITION->lod0_size = 32;
+    PARTITION->horizon_size = 256;
+    Gd<FoliageLayerBasic> LAYER = create FoliageLayerBasic;
+    LAYER->lattice_spacing = 8;
+    {
+      Gd<FoliageAsset> asset = create FoliageAsset;
+      asset->lods.push_back(create BoxMesh);
+      for (int lod = 0; lod < 8; lod++) {
+        asset->lod_map.push_back(0);
+      }
+      Gd<FoliageCollectionBasic> collection = create FoliageCollectionBasic;
+      collection->assets.push_back(asset);
+      LAYER->collections.push_back(collection);
+    }
+    PARTITION->add_child(LAYER);
+  ]]
+  gd.text((code:gsub("PARTITION", partition):gsub("LAYER", layer)))
+}
+
+@test
+@async
+func gets_ready() {
+  invoke small_partition(partition, layer);
+  add_child(partition);
+  await partition->foliage_is_ready;
+
+  assert layer->get_child_count() > 0;
+  int64_t visible = 0;
+  for (int i = 0; i < layer->get_child_count(); i++) {
+    Gd<Node3D> chunk = layer->get_child(i) as Gd<Node3D>;
+    assert chunk;
+    visible += chunk->is_visible();
+  }
+  assert visible > 0;
+}
+
+// The observer is at the corner of the four LOD-0 chunks around the origin: each one is visible.
+@test
+@async
+func shows_the_finest_chunks_near_the_observer() {
+  invoke small_partition(partition, layer);
+  add_child(partition);
+  await partition->foliage_is_ready;
+  await get_tree()->process_frame;
+
+  int64_t near = 0;
+  for (int i = 0; i < layer->get_child_count(); i++) {
+    Gd<Node3D> chunk = layer->get_child(i) as Gd<Node3D>;
+    Vector3 center = chunk->get_position();
+    if (chunk->is_visible() && Math::abs(center.x) == 16 && Math::abs(center.z) == 16) {
+      near++;
+    }
+  }
+  assert near == 4;
+}
+
+@test
+func hides_layers_above_hide_lod() {
+  invoke small_partition(partition, layer);
+  layer->hide_lod = 0;  // No LOD at all.
+  add_child(partition);
+  assert layer->get_child_count() == 0;
+}
+
+// Freeing the partition cancels and waits for the chunks being built, which must not crash.
+@test
+@async
+func frees_while_chunks_build() {
+  invoke small_partition(partition, layer);
+  partition->horizon_size = 4096;
+  layer->lattice_spacing = 2;  // Slow chunks.
+  add_child(partition);
+  await get_tree()->process_frame;
+  partition->queue_free();
+  await get_tree()->process_frame;
+  await get_tree()->process_frame;
+  assert get_child_count() == 0;
+}

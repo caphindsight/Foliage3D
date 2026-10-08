@@ -1,0 +1,293 @@
+// Tests of FoliageLayer: the randomized lattice, and the chunks it builds. Without a terrain, the ground is flat at
+// height 0.
+@test
+class_name FoliageLayerTest
+extends Node
+
+@test
+func shows_lods_below_hide_lod() {
+  Gd<FoliageLayer> layer = create FoliageLayer;
+  add_child(layer);
+  layer->hide_lod = 3;
+  assert layer->shows_lod(0) && layer->shows_lod(2);
+  assert !layer->shows_lod(3) && !layer->shows_lod(10);
+  layer->hide_lod = -1;
+  assert layer->shows_lod(100);
+}
+
+@test
+func without_randomness_is_a_regular_lattice() {
+  Gd<FoliageLayer> layer = create FoliageLayer;
+  add_child(layer);
+  layer->lattice_spacing = 16;
+  layer->randomness = 0;
+  layer->keep = 1;
+  Gd<FoliagePlacement> p = layer->prepare_placement(Rect2(0, 0, 64, 64));
+  assert p->size() == 16;  // x and z in 0, 16, 32 and 48: the rect's end is outside.
+  for (int i = 0; i < p->size(); i++) {
+    Vector3 at = p->get_transform(i).origin;
+    assert Math::fmod(at.x as double, 16.0) == 0 && Math::fmod(at.z as double, 16.0) == 0;
+    assert at.x >= 0 && at.x < 64 && at.z >= 0 && at.z < 64;
+    assert at.y == 0;
+    assert p->get_normal(i) == Vector3(0, 1, 0);
+    assert p->sample_texture(i, 0) == 1;
+    assert !p->get_asset(i);
+  }
+}
+
+@test
+func keep_zero_places_nothing() {
+  Gd<FoliageLayer> layer = create FoliageLayer;
+  add_child(layer);
+  layer->keep = 0;
+  assert layer->prepare_placement(Rect2(-500, -500, 1000, 1000))->size() == 0;
+}
+
+@test
+func keeps_the_given_share_of_nodes() {
+  Gd<FoliageLayer> layer = create FoliageLayer;
+  add_child(layer);
+  layer->lattice_spacing = 10;
+  layer->randomness = 0;
+  layer->keep = 0.3;
+  int64_t kept = layer->prepare_placement(Rect2(0, 0, 640, 640))->size();
+  assert kept > 4096 * 0.27 && kept < 4096 * 0.33;
+}
+
+@test
+func jitter_stays_within_randomness() {
+  Gd<FoliageLayer> layer = create FoliageLayer;
+  add_child(layer);
+  layer->lattice_spacing = 10;
+  layer->randomness = 0.3;
+  layer->keep = 1;
+  Gd<FoliagePlacement> p = layer->prepare_placement(Rect2(0, 0, 200, 200));
+  assert p->size() > 300;
+  double max_offset = 0;
+  for (int i = 0; i < p->size(); i++) {
+    Vector3 at = p->get_transform(i).origin;
+    Vector2 offset(at.x - Math::round(at.x / 10) * 10, at.z - Math::round(at.z / 10) * 10);
+    assert Math::abs(offset.x) <= 3 + 1e-3 && Math::abs(offset.y) <= 3 + 1e-3;
+    max_offset = MAX(max_offset, MAX(Math::abs(offset.x), Math::abs(offset.y)) as double);
+  }
+  assert max_offset > 2;  // The nodes do move.
+}
+
+@test
+func points_stay_inside_the_rect() {
+  Gd<FoliageLayer> layer = create FoliageLayer;
+  add_child(layer);
+  layer->lattice_spacing = 7;
+  Rect2 rect(-53, -31, 97, 61);
+  Gd<FoliagePlacement> p = layer->prepare_placement(rect);
+  assert p->size() > 0;
+  for (int i = 0; i < p->size(); i++) {
+    Vector3 at = p->get_transform(i).origin;
+    assert rect.has_point(Vector2(at.x, at.z));
+  }
+}
+
+// Chunks of any size see the same points where they overlap, so neighboring chunks and LODs line up.
+@test
+func chunks_agree_on_their_points() {
+  Gd<FoliageLayer> layer = create FoliageLayer;
+  add_child(layer);
+  layer->lattice_spacing = 8;
+  Gd<FoliagePlacement> whole = layer->prepare_placement(Rect2(-64, -64, 128, 128));
+  PackedVector3Array parts;
+  for (int k = 0; k < 4; k++) {
+    Gd<FoliagePlacement> part = layer->prepare_placement(Rect2(k & 1 ? 0 : -64, k & 2 ? 0 : -64, 64, 64));
+    for (int i = 0; i < part->size(); i++) {
+      parts.push_back(part->get_transform(i).origin);
+    }
+  }
+  assert parts.size() == whole->size();
+  for (int i = 0; i < whole->size(); i++) {
+    assert parts.has(whole->get_transform(i).origin);
+  }
+}
+
+// The chunk that a FoliageLayerBasic with one collection builds: an asset per mesh, each placed at LOD 0.
+@test
+@async
+func basic_builds_a_multimesh_per_mesh() {
+  Gd<BoxMesh> box = create BoxMesh;
+  Gd<SphereMesh> sphere = create SphereMesh;
+  Gd<FoliageCollectionBasic> collection = create FoliageCollectionBasic;
+  for (Gd<Mesh> mesh : {Gd<Mesh>(box), Gd<Mesh>(sphere)}) {
+    Gd<FoliageAsset> asset = create FoliageAsset;
+    asset->lods.push_back(mesh);
+    asset->lod_map.push_back(0);
+    asset->cast_shadow = ShadowCastingSetting::OFF;
+    collection->assets.push_back(asset);
+  }
+  Gd<FoliageLayerBasic> layer = create FoliageLayerBasic;
+  add_child(layer);
+  layer->collections.push_back(collection);
+  Rect2 rect(32, -64, 64, 64);
+  int64_t points = layer->prepare_placement(rect)->size();
+  assert points > 0;
+
+  Gd<Node3D> chunk = await layer->build_chunk(rect, 0);
+  assert chunk;
+  add_child(chunk);
+  assert !chunk->is_visible();
+  assert chunk->get_position() == Vector3(64, 0, -32);
+  assert chunk->get_child_count() == 2;
+  int64_t instances = 0;
+  for (int i = 0; i < chunk->get_child_count(); i++) {
+    Gd<FoliageMultiMesh> node = chunk->get_child(i) as Gd<FoliageMultiMesh>;
+    assert node;
+    assert node->get_cast_shadows_setting() == GeometryInstance3D::SHADOW_CASTING_SETTING_OFF;
+    assert !node->scene;
+    Gd<MultiMesh> mm = node->get_multimesh();
+    assert mm->get_mesh().ptr() == box.ptr() || mm->get_mesh().ptr() == sphere.ptr();
+    instances += mm->get_instance_count();
+    for (int j = 0; j < mm->get_instance_count(); j++) {
+      Vector3 at = mm->get_instance_transform(j).origin + chunk->get_position();
+      assert rect.has_point(Vector2(at.x, at.z));
+    }
+  }
+  assert instances == points;  // A density of 1 places an asset on every point.
+}
+
+@test
+@async
+func basic_skips_lods_that_assets_lack() {
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->lods.push_back(create BoxMesh);
+  asset->lod_map.push_back(0);
+  asset->lod_map.push_back(5);  // There's no lods[5].
+  Gd<FoliageCollectionBasic> collection = create FoliageCollectionBasic;
+  collection->assets.push_back(asset);
+  Gd<FoliageLayerBasic> layer = create FoliageLayerBasic;
+  add_child(layer);
+  layer->collections.push_back(collection);
+
+  Gd<Node3D> lod0 = await layer->build_chunk(Rect2(0, 0, 64, 64), 0);
+  Gd<Node3D> lod1 = await layer->build_chunk(Rect2(0, 0, 64, 64), 1);
+  Gd<Node3D> lod2 = await layer->build_chunk(Rect2(0, 0, 64, 64), 2);
+  add_child(lod0);
+  add_child(lod1);
+  add_child(lod2);
+  assert lod0->get_child_count() == 1;
+  assert lod1->get_child_count() == 0;
+  assert lod2->get_child_count() == 0;
+}
+
+@test
+@async
+func basic_density_zero_places_nothing() {
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->lods.push_back(create BoxMesh);
+  asset->lod_map.push_back(0);
+  Gd<FoliageCollectionBasic> collection = create FoliageCollectionBasic;
+  collection->assets.push_back(asset);
+  collection->density = 0;
+  Gd<FoliageLayerBasic> layer = create FoliageLayerBasic;
+  add_child(layer);
+  layer->collections.push_back(collection);
+  Gd<Node3D> chunk = await layer->build_chunk(Rect2(0, 0, 128, 128), 0);
+  add_child(chunk);
+  assert chunk->get_child_count() == 0;
+}
+
+// Collections split the points by their densities, and densities that sum up to more than 1 are scaled down.
+@test
+@async
+func basic_shares_points_between_collections() {
+  Gd<BoxMesh> box = create BoxMesh;
+  Gd<SphereMesh> sphere = create SphereMesh;
+  Gd<FoliageLayerBasic> layer = create FoliageLayerBasic;
+  add_child(layer);
+  layer->lattice_spacing = 8;
+  for (Gd<Mesh> mesh : {Gd<Mesh>(box), Gd<Mesh>(sphere)}) {
+    Gd<FoliageAsset> asset = create FoliageAsset;
+    asset->lods.push_back(mesh);
+    asset->lod_map.push_back(0);
+    Gd<FoliageCollectionBasic> collection = create FoliageCollectionBasic;
+    collection->assets.push_back(asset);
+    collection->density = 2;
+    layer->collections.push_back(collection);
+  }
+  Rect2 rect(0, 0, 256, 256);
+  int64_t points = layer->prepare_placement(rect)->size();
+  Gd<Node3D> chunk = await layer->build_chunk(rect, 0);
+  add_child(chunk);
+  assert chunk->get_child_count() == 2;
+  int64_t a = (chunk->get_child(0) as Gd<FoliageMultiMesh>)->get_multimesh()->get_instance_count();
+  int64_t b = (chunk->get_child(1) as Gd<FoliageMultiMesh>)->get_multimesh()->get_instance_count();
+  assert a + b == points;
+  assert a > points * 0.4 && b > points * 0.4;
+}
+
+// Up close, a FoliageMultiMesh turns its instances into scenes, one per frame.
+@test
+@async
+func multimesh_replaces_instances_with_scenes() {
+  Gd<Node3D> prop = create Node3D;
+  prop->set_name("Prop");
+  Gd<PackedScene> scene = create PackedScene;
+  scene->pack(prop);
+  destroy prop;
+
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->lods.push_back(create BoxMesh);
+  asset->lod_map.push_back(-1);  // The first mesh, as scenes.
+  asset->scene = scene;
+  asset->scene_mode = FoliageSceneMode::REPLACE;
+  Gd<FoliageCollectionBasic> collection = create FoliageCollectionBasic;
+  collection->assets.push_back(asset);
+  Gd<FoliageLayerBasic> layer = create FoliageLayerBasic;
+  add_child(layer);
+  layer->collections.push_back(collection);
+
+  Gd<Node3D> chunk = await layer->build_chunk(Rect2(0, 0, 48, 48), 0);
+  Gd<FoliageMultiMesh> node = chunk->get_child(0) as Gd<FoliageMultiMesh>;
+  assert node && node->scene == scene;
+  Gd<MultiMesh> mm = node->get_multimesh();
+  int64_t count = mm->get_instance_count();
+  assert count > 0;
+  add_child(chunk);
+  for (int64_t i = 0; i < count + 2; i++) {
+    await get_tree()->process_frame;
+  }
+  assert node->get_child_count() == count;
+  assert mm->get_visible_instance_count() == 0;
+  for (int64_t i = 0; i < count; i++) {
+    Gd<Node3D> instance = node->get_child(i) as Gd<Node3D>;
+    assert instance;
+    assert instance->get_transform().is_equal_approx(mm->get_instance_transform(count - 1 - i));
+  }
+}
+
+@test
+@async
+func multimesh_adds_scenes_to_instances() {
+  Gd<Node3D> prop = create Node3D;
+  Gd<PackedScene> scene = create PackedScene;
+  scene->pack(prop);
+  destroy prop;
+
+  Gd<FoliageAsset> asset = create FoliageAsset;
+  asset->lods.push_back(create BoxMesh);
+  asset->lod_map.push_back(-1);
+  asset->scene = scene;
+  asset->scene_mode = FoliageSceneMode::ADD;
+  Gd<FoliageCollectionBasic> collection = create FoliageCollectionBasic;
+  collection->assets.push_back(asset);
+  Gd<FoliageLayerBasic> layer = create FoliageLayerBasic;
+  add_child(layer);
+  layer->collections.push_back(collection);
+
+  Gd<Node3D> chunk = await layer->build_chunk(Rect2(0, 0, 48, 48), 0);
+  Gd<FoliageMultiMesh> node = chunk->get_child(0) as Gd<FoliageMultiMesh>;
+  Gd<MultiMesh> mm = node->get_multimesh();
+  int64_t count = mm->get_instance_count();
+  add_child(chunk);
+  for (int64_t i = 0; i < count + 2; i++) {
+    await get_tree()->process_frame;
+  }
+  assert node->get_child_count() == count;
+  assert mm->get_visible_instance_count() == -1;  // The meshes stay.
+}

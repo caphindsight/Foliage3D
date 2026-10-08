@@ -1,0 +1,125 @@
+// Tests of FoliageCollectionBasic: picking assets, and the probability of placing one.
+@test
+class_name FoliageCollectionBasicTest
+extends Node
+
+@test
+func picks_assets_uniformly_without_weights() {
+  Gd<FoliageAsset> a = create FoliageAsset;
+  Gd<FoliageAsset> b = create FoliageAsset;
+  Gd<FoliageCollectionBasic> c = create FoliageCollectionBasic;
+  c->assets.push_back(a);
+  c->assets.push_back(b);
+  assert c->get_asset(0.0) == a;
+  assert c->get_asset(0.49) == a;
+  assert c->get_asset(0.51) == b;
+  assert c->get_asset(0.999) == b;
+}
+
+@test
+func picks_assets_by_weight() {
+  Gd<FoliageAsset> a = create FoliageAsset;
+  Gd<FoliageAsset> b = create FoliageAsset;
+  Gd<FoliageCollectionBasic> c = create FoliageCollectionBasic;
+  c->assets.push_back(a);
+  c->assets.push_back(b);
+  PackedFloat32Array weights;
+  weights.push_back(1);
+  weights.push_back(3);
+  c->set_weights(weights);
+  assert c->get_weights() == weights;
+  assert c->get_asset(0.1) == a;
+  assert c->get_asset(0.24) == a;
+  assert c->get_asset(0.26) == b;
+  assert c->get_asset(0.9) == b;
+}
+
+@test
+func without_assets_picks_nothing() {
+  Gd<FoliageCollectionBasic> c = create FoliageCollectionBasic;
+  assert !c->get_asset(0.5);
+}
+
+@test
+func probability_is_the_density() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(Basis(), Vector3(5, 100, 5)), Vector3(1, 1, 0).normalized(), 3, 4, 0.5);
+  Gd<FoliageCollectionBasic> c = create FoliageCollectionBasic;
+  assert c->get_collection_probability(p, 0) == 1;
+  c->density = 0.3;
+  assert Math::is_equal_approx(c->get_collection_probability(p, 0), 0.3);
+}
+
+@test
+func probability_follows_textures() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(), Vector3(0, 1, 0), 2, 5, 0.25);
+  Gd<FoliageCollectionBasic> c = create FoliageCollectionBasic;
+  PackedInt32Array textures;
+  textures.push_back(2);
+  c->set_textures(textures);
+  assert Math::is_equal_approx(c->get_collection_probability(p, 0), 0.75);  // The base texture's share.
+
+  textures.push_back(5);
+  c->set_textures(textures);
+  assert Math::is_equal_approx(c->get_collection_probability(p, 0), 1.0);
+
+  textures.clear();
+  textures.push_back(7);
+  c->set_textures(textures);
+  assert c->get_collection_probability(p, 0) == 0;
+}
+
+@test
+func ignores_texture_ids_out_of_range() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(), Vector3(0, 1, 0), 2, -1, 0.0);
+  Gd<FoliageCollectionBasic> c = create FoliageCollectionBasic;
+  PackedInt32Array textures;
+  textures.push_back(64);
+  textures.push_back(-1);
+  c->set_textures(textures);
+  assert c->get_textures() == textures;
+  assert c->get_collection_probability(p, 0) == 1;  // No usable id, so no texture filter.
+}
+
+@test
+func probability_follows_height_and_slope_curves() {
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  p->add_point(Transform3D(Basis(), Vector3(0, 0.5, 0)), Vector3(0, 1, 0), 0, -1, 0.0);
+  p->add_point(Transform3D(Basis(), Vector3(0, 1, 0)), Vector3(1, 0, 0), 0, -1, 0.0);
+  Gd<Curve> rising = create Curve;  // 0 at 0, 1 at 1, and 0.5 halfway.
+  rising->add_point(Vector2(0, 0));
+  rising->add_point(Vector2(1, 1));
+  Gd<FoliageCollectionBasic> c = create FoliageCollectionBasic;
+  c->height_density_curve = rising;
+  assert Math::is_equal_approx(c->get_collection_probability(p, 0), 0.5);
+  assert Math::is_equal_approx(c->get_collection_probability(p, 1), 1.0);
+
+  // The slope curve takes degrees: 1 on flat ground, 0 on walls.
+  Gd<Curve> flat_only = create Curve;
+  flat_only->set_max_domain(90);
+  flat_only->add_point(Vector2(0, 1));
+  flat_only->add_point(Vector2(90, 0));
+  c->height_density_curve = nullptr;
+  c->slope_density_curve = flat_only;
+  assert Math::is_equal_approx(c->get_collection_probability(p, 0), 1.0);
+  assert Math::is_zero_approx(c->get_collection_probability(p, 1));
+}
+
+@test
+func probability_follows_noise() {
+  Gd<FastNoiseLite> noise = create FastNoiseLite;
+  noise->set_frequency(0.05);
+  Gd<FoliagePlacement> p = create FoliagePlacement;
+  for (int i = 0; i < 16; i++) {
+    p->add_point(Transform3D(Basis(), Vector3(i * 13, 0, i * 7)), Vector3(0, 1, 0), 0, -1, 0.0);
+  }
+  Gd<FoliageCollectionBasic> c = create FoliageCollectionBasic;
+  c->density_noise = noise;
+  for (int i = 0; i < p->size(); i++) {
+    Vector3 at = p->get_transform(i).origin;
+    double expected = noise->get_noise_2d(at.x, at.z) / 2 + 0.5;
+    assert Math::is_equal_approx(c->get_collection_probability(p, i), expected);
+  }
+}

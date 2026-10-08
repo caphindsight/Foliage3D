@@ -1,0 +1,112 @@
+// Tests of FoliageRandom: positions seed it deterministically.
+@test
+class_name FoliageRandomTest
+extends Node
+
+@test
+func same_position_same_sequence() {
+  Gd<FoliageRandom> a = FoliageRandom::seeded(42);
+  Gd<FoliageRandom> b = FoliageRandom::seeded(42);
+  a->seed_with_vec2(Vector2(12.5, -7.25));
+  b->seed_with_vec2(Vector2(12.5, -7.25));
+  for (int i = 0; i < 8; i++) {
+    assert a->randi() == b->randi();
+  }
+}
+
+@test
+func reseeding_restarts_the_sequence() {
+  Gd<FoliageRandom> rng = FoliageRandom::seeded(42);
+  rng->seed_with_vec2(Vector2(3, 4));
+  double first = rng->randf();
+  rng->randf();
+  rng->seed_with_vec2(Vector2(3, 4));
+  assert rng->randf() == first;
+}
+
+@test
+func ignores_differences_below_sensitivity() {
+  Gd<FoliageRandom> rng = FoliageRandom::seeded(42);
+  rng->seed_with_vec2(Vector2(10, 20));
+  double a = rng->randf();
+  rng->seed_with_vec2(Vector2(10.0001, 19.9999));
+  assert rng->randf() == a;
+
+  rng->sensitivity = 1;
+  rng->seed_with_vec2(Vector2(10.2, 20.3));
+  double b = rng->randf();
+  rng->seed_with_vec2(Vector2(9.9, 19.8));
+  assert rng->randf() == b;
+}
+
+@test
+func different_positions_differ() {
+  Gd<FoliageRandom> rng = FoliageRandom::seeded(42);
+  rng->seed_with_vec2(Vector2(1, 2));
+  int64_t a = rng->randi();
+  rng->seed_with_vec2(Vector2(2, 1));  // The coordinates don't commute.
+  int64_t b = rng->randi();
+  rng->seed_with_vec2(Vector2(1, 2.01));
+  int64_t c = rng->randi();
+  assert a != b;
+  assert a != c;
+}
+
+@test
+func master_seeds_are_independent() {
+  Gd<FoliageRandom> a = FoliageRandom::seeded(1);
+  Gd<FoliageRandom> b = FoliageRandom::seeded(2);
+  a->seed_with_vec2(Vector2(5, 5));
+  b->seed_with_vec2(Vector2(5, 5));
+  assert a->randi() != b->randi();
+}
+
+@test
+func negative_positions_work() {
+  Gd<FoliageRandom> rng = FoliageRandom::seeded(7);
+  rng->seed_with_vec2(Vector2(-123.5, -0.25));
+  int64_t a = rng->randi();
+  rng->seed_with_vec2(Vector2(123.5, 0.25));
+  int64_t b = rng->randi();
+  rng->seed_with_vec2(Vector2(-123.5, -0.25));
+  assert rng->randi() == a;
+  assert a != b;
+}
+
+@test
+func all_dimensions_are_deterministic() {
+  Gd<FoliageRandom> a = FoliageRandom::seeded(9);
+  Gd<FoliageRandom> b = FoliageRandom::seeded(9);
+  a->seed_with_float(3.5);
+  b->seed_with_float(3.5);
+  assert a->randi() == b->randi();
+  a->seed_with_vec3(Vector3(1, 2, 3));
+  b->seed_with_vec3(Vector3(1, 2, 3));
+  assert a->randi() == b->randi();
+  a->seed_with_vec4(Vector4(1, 2, 3, 4));
+  b->seed_with_vec4(Vector4(1, 2, 3, 4));
+  assert a->randi() == b->randi();
+  b->seed_with_vec4(Vector4(1, 2, 4, 3));
+  a->seed_with_vec4(Vector4(1, 2, 3, 4));
+  assert a->randi() != b->randi();
+}
+
+// Seeding with neighboring lattice positions must not correlate the values.
+@test
+func values_are_uniform_across_positions() {
+  Gd<FoliageRandom> rng = FoliageRandom::seeded(123);
+  const int n = 4096;
+  double sum = 0;
+  int buckets[4] = {};
+  for (int i = 0; i < n; i++) {
+    rng->seed_with_vec2(Vector2(16 * (i % 64), 16 * (i / 64)));
+    double x = rng->randf();
+    assert x >= 0 && x <= 1;
+    sum += x;
+    buckets[MIN(int(x * 4), 3)]++;
+  }
+  assert Math::abs(sum / n - 0.5) < 0.03;
+  for (int count : buckets) {
+    assert count > n / 4 * 0.85 && count < n / 4 * 1.15;
+  }
+}
