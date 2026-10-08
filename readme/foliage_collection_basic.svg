@@ -78,13 +78,13 @@
   <text x="16" y="1510"><tspan fill="#e6edf3">        </tspan><tspan fill="#56d4dd">texture_weight</tspan><tspan fill="#e6edf3">(placement-&gt;overlay_texture_ids[i]) * placement-&gt;texture_blend_amounts[i];</tspan></text>
   <text x="16" y="1530"><tspan fill="#e6edf3">  }</tspan></text>
   <text x="16" y="1550"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Vector3</tspan><tspan fill="#e6edf3"> position = placement-&gt;</tspan><tspan fill="#56d4dd">get_transform</tspan><tspan fill="#e6edf3">(i).origin;</tspan></text>
-  <text x="16" y="1570"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (height_density_curve.</tspan><tspan fill="#56d4dd">is_valid</tspan><tspan fill="#e6edf3">()) {</tspan></text>
+  <text x="16" y="1570"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (height_density_curve) {</tspan></text>
   <text x="16" y="1590"><tspan fill="#e6edf3">    probability *= height_density_curve-&gt;</tspan><tspan fill="#56d4dd">sample</tspan><tspan fill="#e6edf3">(position.y);</tspan></text>
   <text x="16" y="1610"><tspan fill="#e6edf3">  }</tspan></text>
-  <text x="16" y="1630"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (slope_density_curve.</tspan><tspan fill="#56d4dd">is_valid</tspan><tspan fill="#e6edf3">()) {</tspan></text>
+  <text x="16" y="1630"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (slope_density_curve) {</tspan></text>
   <text x="16" y="1650"><tspan fill="#e6edf3">    probability *= slope_density_curve-&gt;</tspan><tspan fill="#56d4dd">sample</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#7ee787">Math</tspan><tspan fill="#e6edf3">::</tspan><tspan fill="#56d4dd">rad_to_deg</tspan><tspan fill="#e6edf3">(placement-&gt;</tspan><tspan fill="#56d4dd">get_slope</tspan><tspan fill="#e6edf3">(i)));</tspan></text>
   <text x="16" y="1670"><tspan fill="#e6edf3">  }</tspan></text>
-  <text x="16" y="1690"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (density_noise.</tspan><tspan fill="#56d4dd">is_valid</tspan><tspan fill="#e6edf3">()) {</tspan></text>
+  <text x="16" y="1690"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (density_noise) {</tspan></text>
   <text x="16" y="1710"><tspan fill="#e6edf3">    probability *= density_noise-&gt;</tspan><tspan fill="#56d4dd">get_noise_2d</tspan><tspan fill="#e6edf3">(position.x, position.z) / </tspan><tspan fill="#d2a8ff">2.0</tspan><tspan fill="#e6edf3"> + </tspan><tspan fill="#d2a8ff">0.5</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="1730"><tspan fill="#e6edf3">  }</tspan></text>
   <text x="16" y="1750"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> probability;</tspan></text>
@@ -96,7 +96,7 @@
   <text x="16" y="1870"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">int64_t</tspan><tspan fill="#e6edf3"> index = cumulative_probabilities_.</tspan><tspan fill="#56d4dd">is_empty</tspan><tspan fill="#e6edf3">()</tspan></text>
   <text x="16" y="1890"><tspan fill="#e6edf3">      ? (uniform * assets.</tspan><tspan fill="#56d4dd">size</tspan><tspan fill="#e6edf3">()) </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">int64_t</tspan></text>
   <text x="16" y="1910"><tspan fill="#e6edf3">      : cumulative_probabilities_.</tspan><tspan fill="#56d4dd">bsearch</tspan><tspan fill="#e6edf3">(uniform);</tspan></text>
-  <text x="16" y="1930"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> index &lt; assets.</tspan><tspan fill="#56d4dd">size</tspan><tspan fill="#e6edf3">() ? assets[index] </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageAsset</tspan><tspan fill="#e6edf3">&gt; : </tspan><tspan fill="#e3b341">nullptr</tspan><tspan fill="#e6edf3">;</tspan></text>
+  <text x="16" y="1930"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> index &lt; assets.</tspan><tspan fill="#56d4dd">size</tspan><tspan fill="#e6edf3">() ? assets[index] </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageAsset</tspan><tspan fill="#e6edf3">&gt; : </tspan><tspan fill="#e3b341">nullptr</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="1950"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="1970"></text>
   <text x="16" y="1990"><tspan fill="#8b949e">// 1 if the texture is one of [member textures], 0 otherwise.</tspan></text>

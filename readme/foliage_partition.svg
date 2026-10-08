@@ -20,11 +20,11 @@
   <text x="16" y="350"></text>
   <text x="16" y="370"><tspan fill="#8b949e">/// The linear size of a LOD-0 chunk, measured in world units, for both horizontal directions X and Z.</tspan></text>
   <text x="16" y="390"><tspan fill="#8b949e">/// The linear size of a LOD-k chunk is lod0_size * 2^k.</tspan></text>
-  <text x="16" y="410"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> lod0_size: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">32</tspan></text>
+  <text x="16" y="410"><tspan fill="#79c0ff">@export_custom</tspan><tspan fill="#e6edf3">(PROPERTY_HINT_NONE, </tspan><tspan fill="#d2a8ff">"suffix:m"</tspan><tspan fill="#e6edf3">) </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> lod0_size: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">32</tspan></text>
   <text x="16" y="430"></text>
   <text x="16" y="450"><tspan fill="#8b949e">/// The linear size of the largest visible chunk in the quad tree.</tspan></text>
   <text x="16" y="470"><tspan fill="#8b949e">/// Must cover the entire world (centered at the coordinate origin).</tspan></text>
-  <text x="16" y="490"><tspan fill="#79c0ff">@export</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> horizon_size: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">4096</tspan></text>
+  <text x="16" y="490"><tspan fill="#79c0ff">@export_custom</tspan><tspan fill="#e6edf3">(PROPERTY_HINT_NONE, </tspan><tspan fill="#d2a8ff">"suffix:m"</tspan><tspan fill="#e6edf3">) </tspan><tspan fill="#e3b341">var</tspan><tspan fill="#e6edf3"> horizon_size: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3"> = </tspan><tspan fill="#d2a8ff">4096</tspan></text>
   <text x="16" y="510"></text>
   <text x="16" y="530"><tspan fill="#8b949e">/// 2D angle limit for a single chunk, when viewed from the camera position.</tspan></text>
   <text x="16" y="550"><tspan fill="#8b949e">/// When the chunk's angular resolution is lower than this value,</tspan></text>
@@ -59,8 +59,8 @@
   <text x="16" y="1130"><tspan fill="#e3b341">decl</tspan><tspan fill="#e6edf3"> {</tspan></text>
   <text x="16" y="1150"><tspan fill="#e6edf3">  </tspan><tspan fill="#8b949e">// The chunk of one layer on one quad.</tspan></text>
   <text x="16" y="1170"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">struct</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">Chunk</tspan><tspan fill="#e6edf3"> {</tspan></text>
-  <text x="16" y="1190"><tspan fill="#e6edf3">    </tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *&gt; task;    </tspan><tspan fill="#8b949e">// Running while the chunk is built; empty once it's claimed, or if the LOD is hidden.</tspan></text>
-  <text x="16" y="1210"><tspan fill="#e6edf3">    </tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *node = </tspan><tspan fill="#e3b341">nullptr</tspan><tspan fill="#e6edf3">;  </tspan><tspan fill="#8b949e">// The built chunk, a child of its layer.</tspan></text>
+  <text x="16" y="1190"><tspan fill="#e6edf3">    </tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt;&gt; task;  </tspan><tspan fill="#8b949e">// Running while the chunk is built; empty once it's claimed, or if the LOD is hidden.</tspan></text>
+  <text x="16" y="1210"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt; node;         </tspan><tspan fill="#8b949e">// The built chunk, a child of its layer.</tspan></text>
   <text x="16" y="1230"><tspan fill="#e6edf3">  };</tspan></text>
   <text x="16" y="1250"></text>
   <text x="16" y="1270"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">struct</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">Quad</tspan><tspan fill="#e6edf3"> {</tspan></text>
@@ -71,9 +71,9 @@
   <text x="16" y="1370"><tspan fill="#e6edf3">    </tspan><tspan fill="#7ee787">bool</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">has_children</tspan><tspan fill="#e6edf3">() </tspan><tspan fill="#e3b341">const</tspan><tspan fill="#e6edf3"> { </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> children[</tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">] != </tspan><tspan fill="#e3b341">nullptr</tspan><tspan fill="#e6edf3">; }</tspan></text>
   <text x="16" y="1390"><tspan fill="#e6edf3">  };</tspan></text>
   <text x="16" y="1410"></text>
-  <text x="16" y="1430"><tspan fill="#e6edf3">  std::vector&lt;</tspan><tspan fill="#7ee787">FoliageLayer</tspan><tspan fill="#e6edf3"> *&gt; layers_;</tspan></text>
+  <text x="16" y="1430"><tspan fill="#e6edf3">  std::vector&lt;</tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageLayer</tspan><tspan fill="#e6edf3">&gt;&gt; layers_;</tspan></text>
   <text x="16" y="1450"><tspan fill="#e6edf3">  std::unique_ptr&lt;</tspan><tspan fill="#7ee787">Quad</tspan><tspan fill="#e6edf3">&gt; root_;</tspan></text>
-  <text x="16" y="1470"><tspan fill="#e6edf3">  std::vector&lt;</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *&gt;&gt; orphans_;  </tspan><tspan fill="#8b949e">// Tasks of dropped chunks that still run.</tspan></text>
+  <text x="16" y="1470"><tspan fill="#e6edf3">  std::vector&lt;</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt;&gt;&gt; orphans_;  </tspan><tspan fill="#8b949e">// Tasks of dropped chunks that still run.</tspan></text>
   <text x="16" y="1490"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Vector2</tspan><tspan fill="#e6edf3"> observer_;</tspan></text>
   <text x="16" y="1510"></text>
   <text x="16" y="1530"><tspan fill="#e6edf3">  </tspan><tspan fill="#8b949e">// Creates a quad, and starts building its chunks on all layers.</tspan></text>
@@ -131,7 +131,7 @@
   <text x="16" y="2570"><tspan fill="#e6edf3">  }</tspan></text>
   <text x="16" y="2590"></text>
   <text x="16" y="2610"><tspan fill="#e6edf3">  </tspan><tspan fill="#8b949e">// Adds the chunk to its layer once it's built. Returns whether it's ready.</tspan></text>
-  <text x="16" y="2630"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">bool</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">poll</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#7ee787">Chunk</tspan><tspan fill="#e6edf3"> &amp;chunk, </tspan><tspan fill="#7ee787">FoliageLayer</tspan><tspan fill="#e6edf3"> *layer) {</tspan></text>
+  <text x="16" y="2630"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">bool</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#56d4dd">poll</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#7ee787">Chunk</tspan><tspan fill="#e6edf3"> &amp;chunk, </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageLayer</tspan><tspan fill="#e6edf3">&gt; layer) {</tspan></text>
   <text x="16" y="2650"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#e3b341">is_done</tspan><tspan fill="#e6edf3"> chunk.task) {</tspan></text>
   <text x="16" y="2670"><tspan fill="#e6edf3">      chunk.node = </tspan><tspan fill="#e3b341">claim</tspan><tspan fill="#e6edf3"> chunk.task;</tspan></text>
   <text x="16" y="2690"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (chunk.node) {</tspan></text>
@@ -166,7 +166,7 @@
   <text x="16" y="3270"><tspan fill="#e6edf3">      chunk.node-&gt;</tspan><tspan fill="#56d4dd">set_visible</tspan><tspan fill="#e6edf3">(!children_ready);</tspan></text>
   <text x="16" y="3290"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (quad.</tspan><tspan fill="#56d4dd">has_children</tspan><tspan fill="#e6edf3">() &amp;&amp; !children_ready) {</tspan></text>
   <text x="16" y="3310"><tspan fill="#e6edf3">        </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#e3b341">auto</tspan><tspan fill="#e6edf3"> &amp;child : quad.children) {</tspan></text>
-  <text x="16" y="3330"><tspan fill="#e6edf3">          </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *node = child-&gt;chunks[i].node) {</tspan></text>
+  <text x="16" y="3330"><tspan fill="#e6edf3">          </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt; node = child-&gt;chunks[i].node) {</tspan></text>
   <text x="16" y="3350"><tspan fill="#e6edf3">            node-&gt;</tspan><tspan fill="#56d4dd">hide</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="3370"><tspan fill="#e6edf3">          }</tspan></text>
   <text x="16" y="3390"><tspan fill="#e6edf3">        }</tspan></text>
@@ -183,9 +183,9 @@
   <text x="16" y="3610"><tspan fill="#e6edf3">    </tspan><tspan fill="#56d4dd">drop_chunks</tspan><tspan fill="#e6edf3">(*root_);</tspan></text>
   <text x="16" y="3630"><tspan fill="#e6edf3">    root_.</tspan><tspan fill="#56d4dd">reset</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="3650"><tspan fill="#e6edf3">  }</tspan></text>
-  <text x="16" y="3670"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *&gt; &amp;task : orphans_) {</tspan></text>
+  <text x="16" y="3670"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt;&gt; &amp;task : orphans_) {</tspan></text>
   <text x="16" y="3690"><tspan fill="#e6edf3">    task.</tspan><tspan fill="#56d4dd">wait</tspan><tspan fill="#e6edf3">();</tspan></text>
-  <text x="16" y="3710"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *node = </tspan><tspan fill="#e3b341">claim</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
+  <text x="16" y="3710"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt; node = </tspan><tspan fill="#e3b341">claim</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
   <text x="16" y="3730"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">destroy</tspan><tspan fill="#e6edf3"> node;</tspan></text>
   <text x="16" y="3750"><tspan fill="#e6edf3">    }</tspan></text>
   <text x="16" y="3770"><tspan fill="#e6edf3">  }</tspan></text>
@@ -219,7 +219,7 @@
   <text x="16" y="4330"><tspan fill="#e6edf3">  </tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4350"><tspan fill="#e6edf3">  layers_.</tspan><tspan fill="#56d4dd">clear</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4370"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">for</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">int64_t</tspan><tspan fill="#e6edf3"> i = </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">; i &lt; </tspan><tspan fill="#56d4dd">get_child_count</tspan><tspan fill="#e6edf3">(); i++) {</tspan></text>
-  <text x="16" y="4390"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">FoliageLayer</tspan><tspan fill="#e6edf3"> *layer = </tspan><tspan fill="#56d4dd">get_child</tspan><tspan fill="#e6edf3">(i) </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">FoliageLayer</tspan><tspan fill="#e6edf3"> *) {</tspan></text>
+  <text x="16" y="4390"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#e3b341">auto</tspan><tspan fill="#e6edf3"> layer = </tspan><tspan fill="#56d4dd">get_child</tspan><tspan fill="#e6edf3">(i) </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">FoliageLayer</tspan><tspan fill="#e6edf3">&gt;) {</tspan></text>
   <text x="16" y="4410"><tspan fill="#e6edf3">      layers_.</tspan><tspan fill="#56d4dd">push_back</tspan><tspan fill="#e6edf3">(layer);</tspan></text>
   <text x="16" y="4430"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (terrain) {</tspan></text>
   <text x="16" y="4450"><tspan fill="#e6edf3">        layer-&gt;terrain_data = terrain-&gt;</tspan><tspan fill="#56d4dd">get_data</tspan><tspan fill="#e6edf3">();</tspan></text>
@@ -231,19 +231,19 @@
   <text x="16" y="4570"><tspan fill="#e6edf3">  root_ = </tspan><tspan fill="#56d4dd">make_quad</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#7ee787">Rect2</tspan><tspan fill="#e6edf3">(-root_size / </tspan><tspan fill="#d2a8ff">2</tspan><tspan fill="#e6edf3">, -root_size / </tspan><tspan fill="#d2a8ff">2</tspan><tspan fill="#e6edf3">, root_size, root_size), root_lod);</tspan></text>
   <text x="16" y="4590"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="4610"></text>
-  <text x="16" y="4630"><tspan fill="#e3b341">on process</tspan><tspan fill="#e6edf3">(delta: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3">) {</tspan></text>
-  <text x="16" y="4650"><tspan fill="#e6edf3">  std::</tspan><tspan fill="#56d4dd">erase_if</tspan><tspan fill="#e6edf3">(orphans_, [](</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *&gt; &amp;task) {</tspan></text>
+  <text x="16" y="4630"><tspan fill="#e3b341">on process</tspan><tspan fill="#e6edf3"> {</tspan></text>
+  <text x="16" y="4650"><tspan fill="#e6edf3">  std::</tspan><tspan fill="#56d4dd">erase_if</tspan><tspan fill="#e6edf3">(orphans_, [](</tspan><tspan fill="#7ee787">Async</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt;&gt; &amp;task) {</tspan></text>
   <text x="16" y="4670"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (!</tspan><tspan fill="#e3b341">is_done</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
   <text x="16" y="4690"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">false</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="4710"><tspan fill="#e6edf3">    }</tspan></text>
-  <text x="16" y="4730"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *node = </tspan><tspan fill="#e3b341">claim</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
+  <text x="16" y="4730"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt; node = </tspan><tspan fill="#e3b341">claim</tspan><tspan fill="#e6edf3"> task) {</tspan></text>
   <text x="16" y="4750"><tspan fill="#e6edf3">      </tspan><tspan fill="#e3b341">destroy</tspan><tspan fill="#e6edf3"> node;</tspan></text>
   <text x="16" y="4770"><tspan fill="#e6edf3">    }</tspan></text>
   <text x="16" y="4790"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">true</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="4810"><tspan fill="#e6edf3">  });</tspan></text>
   <text x="16" y="4830"></text>
-  <text x="16" y="4850"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Viewport</tspan><tspan fill="#e6edf3"> *viewport = </tspan><tspan fill="#56d4dd">get_viewport</tspan><tspan fill="#e6edf3">();</tspan></text>
-  <text x="16" y="4870"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Camera3D</tspan><tspan fill="#e6edf3"> *camera = viewport ? viewport-&gt;</tspan><tspan fill="#56d4dd">get_camera_3d</tspan><tspan fill="#e6edf3">() : </tspan><tspan fill="#e3b341">nullptr</tspan><tspan fill="#e6edf3">;</tspan></text>
+  <text x="16" y="4850"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Viewport</tspan><tspan fill="#e6edf3">&gt; viewport = </tspan><tspan fill="#56d4dd">get_viewport</tspan><tspan fill="#e6edf3">();</tspan></text>
+  <text x="16" y="4870"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Camera3D</tspan><tspan fill="#e6edf3">&gt; camera = viewport ? viewport-&gt;</tspan><tspan fill="#56d4dd">get_camera_3d</tspan><tspan fill="#e6edf3">() : </tspan><tspan fill="#e3b341">nullptr</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="4890"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Vector3</tspan><tspan fill="#e6edf3"> observer = camera ? camera-&gt;</tspan><tspan fill="#56d4dd">get_global_position</tspan><tspan fill="#e6edf3">() : </tspan><tspan fill="#7ee787">Vector3</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="4910"><tspan fill="#e6edf3">  observer_ = </tspan><tspan fill="#7ee787">Vector2</tspan><tspan fill="#e6edf3">(observer.x, observer.z);</tspan></text>
   <text x="16" y="4930"></text>

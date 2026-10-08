@@ -55,11 +55,11 @@ GitHub can't highlight GD++, so [`readme/index.md`](readme/index.md) shows each 
 
 ### Build the addon
 
-The repository root is a GD++ project (`gd++proj.toml`), and `addons/foliage_3d` is a GD++ package (`gd++pkg.toml`). From the repository root:
+The repository root is a GD++ project (`.gd++proj`), and `addons/foliage_3d` is a GD++ package (`.gd++pkg`). From the repository root:
 
 ```sh
 gd++ fetch --missing   # download the godot-cpp bindings and Godot API spec the package uses
-gd++ build --proj      # debug build of all packages, for this machine
+gd++ build             # debug build of all packages, for this machine
 ```
 
 You can also run `gd++ build` inside `addons/foliage_3d`. The build puts the GDExtension library and its `.gdextension` file in `addons/foliage_3d`, where Godot loads them. Debug builds hot-reload while the editor is open.
@@ -67,9 +67,9 @@ You can also run `gd++ build` inside `addons/foliage_3d`. The build puts the GDE
 Other useful builds:
 
 ```sh
-gd++ build --proj --ship --for l.x64 w.x64            # optimized release builds for Linux and Windows
-gd++ build --proj --opt --profile foliage --print     # print timing tables of the optimized foliage code while the game runs
-gd++ build --proj --clean                             # rebuild from scratch
+gd++ build --ship --for l.x64 w.x64            # optimized release builds for Linux and Windows
+gd++ build --opt --profile foliage --print     # print timing tables of the optimized foliage code while the game runs
+gd++ build --clean                             # rebuild from scratch
 ```
 
 Run `gd++ build --help` for all options, and `gd++ man build` for detailed documentation.

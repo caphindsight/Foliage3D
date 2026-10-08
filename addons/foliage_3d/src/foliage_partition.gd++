@@ -17,11 +17,11 @@ extends Node
 
 /// The linear size of a LOD-0 chunk, measured in world units, for both horizontal directions X and Z.
 /// The linear size of a LOD-k chunk is lod0_size * 2^k.
-@export var lod0_size: float = 32
+@export_custom(PROPERTY_HINT_NONE, "suffix:m") var lod0_size: float = 32
 
 /// The linear size of the largest visible chunk in the quad tree.
 /// Must cover the entire world (centered at the coordinate origin).
-@export var horizon_size: float = 4096
+@export_custom(PROPERTY_HINT_NONE, "suffix:m") var horizon_size: float = 4096
 
 /// 2D angle limit for a single chunk, when viewed from the camera position.
 /// When the chunk's angular resolution is lower than this value,
@@ -228,7 +228,7 @@ on ready {
   root_ = make_quad(Rect2(-root_size / 2, -root_size / 2, root_size, root_size), root_lod);
 }
 
-on process(delta: float) {
+on process {
   std::erase_if(orphans_, [](Async<Gd<Node3D>> &task) {
     if (!is_done task) {
       return false;

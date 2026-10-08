@@ -16,25 +16,25 @@
   <text x="16" y="270"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="290"></text>
   <text x="16" y="310"><tspan fill="#e3b341">on ready</tspan><tspan fill="#e6edf3"> {</tspan></text>
-  <text x="16" y="330"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">MultiMesh</tspan><tspan fill="#e6edf3">&gt; mm = </tspan><tspan fill="#56d4dd">get_multimesh</tspan><tspan fill="#e6edf3">();</tspan></text>
-  <text x="16" y="350"><tspan fill="#e6edf3">  count_ = mm.</tspan><tspan fill="#56d4dd">is_valid</tspan><tspan fill="#e6edf3">() ? mm-&gt;</tspan><tspan fill="#56d4dd">get_visible_instance_count</tspan><tspan fill="#e6edf3">() : </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">;</tspan></text>
+  <text x="16" y="330"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">MultiMesh</tspan><tspan fill="#e6edf3">&gt; mm = </tspan><tspan fill="#56d4dd">get_multimesh</tspan><tspan fill="#e6edf3">();</tspan></text>
+  <text x="16" y="350"><tspan fill="#e6edf3">  count_ = mm ? mm-&gt;</tspan><tspan fill="#56d4dd">get_visible_instance_count</tspan><tspan fill="#e6edf3">() : </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="370"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (count_ &lt; </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">) {</tspan></text>
   <text x="16" y="390"><tspan fill="#e6edf3">    count_ = mm-&gt;</tspan><tspan fill="#56d4dd">get_instance_count</tspan><tspan fill="#e6edf3">();  </tspan><tspan fill="#8b949e">// -1 means all instances are visible.</tspan></text>
   <text x="16" y="410"><tspan fill="#e6edf3">  }</tspan></text>
   <text x="16" y="430"><tspan fill="#e6edf3">}</tspan></text>
   <text x="16" y="450"></text>
-  <text x="16" y="470"><tspan fill="#e3b341">on process</tspan><tspan fill="#e6edf3">(delta: </tspan><tspan fill="#7ee787">float</tspan><tspan fill="#e6edf3">) {</tspan></text>
-  <text x="16" y="490"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (scene.</tspan><tspan fill="#56d4dd">is_null</tspan><tspan fill="#e6edf3">() || count_ == </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">) {</tspan></text>
+  <text x="16" y="470"><tspan fill="#e3b341">on process</tspan><tspan fill="#e6edf3"> {</tspan></text>
+  <text x="16" y="490"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (!scene || count_ == </tspan><tspan fill="#d2a8ff">0</tspan><tspan fill="#e6edf3">) {</tspan></text>
   <text x="16" y="510"><tspan fill="#e6edf3">    </tspan><tspan fill="#56d4dd">set_process</tspan><tspan fill="#e6edf3">(</tspan><tspan fill="#e3b341">false</tspan><tspan fill="#e6edf3">);</tspan></text>
   <text x="16" y="530"><tspan fill="#e6edf3">    </tspan><tspan fill="#e3b341">return</tspan><tspan fill="#e6edf3">;</tspan></text>
   <text x="16" y="550"><tspan fill="#e6edf3">  }</tspan></text>
-  <text x="16" y="570"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Ref</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">MultiMesh</tspan><tspan fill="#e6edf3">&gt; mm = </tspan><tspan fill="#56d4dd">get_multimesh</tspan><tspan fill="#e6edf3">();</tspan></text>
+  <text x="16" y="570"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">MultiMesh</tspan><tspan fill="#e6edf3">&gt; mm = </tspan><tspan fill="#56d4dd">get_multimesh</tspan><tspan fill="#e6edf3">();</tspan></text>
   <text x="16" y="590"><tspan fill="#e6edf3">  count_--;</tspan></text>
   <text x="16" y="610"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (scene_mode == </tspan><tspan fill="#7ee787">FoliageSceneMode</tspan><tspan fill="#e6edf3">::REPLACE) {</tspan></text>
   <text x="16" y="630"><tspan fill="#e6edf3">    mm-&gt;</tspan><tspan fill="#56d4dd">set_visible_instance_count</tspan><tspan fill="#e6edf3">(count_);</tspan></text>
   <text x="16" y="650"><tspan fill="#e6edf3">  }</tspan></text>
-  <text x="16" y="670"><tspan fill="#e6edf3">  </tspan><tspan fill="#7ee787">Node</tspan><tspan fill="#e6edf3"> *instance = scene-&gt;</tspan><tspan fill="#56d4dd">instantiate</tspan><tspan fill="#e6edf3">();</tspan></text>
-  <text x="16" y="690"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *instance3d = instance </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3"> *) {</tspan></text>
+  <text x="16" y="670"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node</tspan><tspan fill="#e6edf3">&gt; instance = scene-&gt;</tspan><tspan fill="#56d4dd">instantiate</tspan><tspan fill="#e6edf3">();</tspan></text>
+  <text x="16" y="690"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">if</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#e3b341">auto</tspan><tspan fill="#e6edf3"> instance3d = instance </tspan><tspan fill="#e3b341">as</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#e3b341">Gd</tspan><tspan fill="#e6edf3">&lt;</tspan><tspan fill="#7ee787">Node3D</tspan><tspan fill="#e6edf3">&gt;) {</tspan></text>
   <text x="16" y="710"><tspan fill="#e6edf3">    instance3d-&gt;</tspan><tspan fill="#56d4dd">set_transform</tspan><tspan fill="#e6edf3">(mm-&gt;</tspan><tspan fill="#56d4dd">get_instance_transform</tspan><tspan fill="#e6edf3">(count_));</tspan></text>
   <text x="16" y="730"><tspan fill="#e6edf3">  }</tspan></text>
   <text x="16" y="750"><tspan fill="#e6edf3">  </tspan><tspan fill="#56d4dd">add_child</tspan><tspan fill="#e6edf3">(instance);</tspan></text>

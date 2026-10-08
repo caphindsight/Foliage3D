@@ -10,7 +10,7 @@ extends Node
 /// This should be picked with the size of foliage assets in mind.
 /// For example, for trees, a good value is around 16 (the default).
 /// For grass / flowers, this can be tuned down to about 2.
-@export var lattice_spacing: float = 16
+@export_custom(PROPERTY_HINT_NONE, "suffix:m") var lattice_spacing: float = 16
 
 /// Lattice node positions are randomized.
 /// Each node ends up within a square with linear size 2 * lattice_spacing * randomness,

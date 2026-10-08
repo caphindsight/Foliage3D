@@ -20,7 +20,7 @@ on ready {
   }
 }
 
-on process(delta: float) {
+on process {
   if (!scene || count_ == 0) {
     set_process(false);
     return;
